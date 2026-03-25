@@ -1,0 +1,1 @@
+# Arquitectura del proyecto MARA-SBC (diseño)
