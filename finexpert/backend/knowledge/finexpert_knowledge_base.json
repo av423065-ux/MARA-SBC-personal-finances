@@ -1,0 +1,1162 @@
+{
+  "sistema": "FinExpert",
+  "version": "1.0",
+  "autores": ["Mario Ávila", "Eduardo Figueroa"],
+  "institucion": "UAEH - ICBI",
+  "total_reglas": 80,
+  "dominios": {
+    "diagnostico": 20,
+    "deuda": 15,
+    "ahorro": 15,
+    "perfil_riesgo": 10,
+    "inversion": 10,
+    "pronostico": 10
+  },
+  "base_hechos": {
+    "fuente": "CONDUSEF / CNBV / Banxico / ENIF 2021",
+    "umbrales_gasto": {
+      "ratio_gasto_fijo_critico": 0.70,
+      "ratio_gasto_fijo_atencion": 0.60,
+      "ratio_gasto_fijo_saludable": 0.50
+    },
+    "umbrales_ahorro": {
+      "ratio_ahorro_minimo": 0.10,
+      "ratio_ahorro_recomendado": 0.20,
+      "ratio_ahorro_optimo": 0.30,
+      "meses_fondo_emergencia_minimo": 3,
+      "meses_fondo_emergencia_recomendado": 6,
+      "meses_fondo_emergencia_freelance": 12
+    },
+    "umbrales_deuda": {
+      "DAI_saludable": 0.20,
+      "DAI_moderado": 0.35,
+      "DAI_alto": 0.50,
+      "tasa_usuraria": 0.36,
+      "num_creditos_maximo": 4
+    },
+    "distribucion_presupuesto": {
+      "regla_50_30_20": {"necesidades": 0.50, "deseos": 0.30, "ahorro": 0.20},
+      "regla_70_20_10_critica": {"necesidades": 0.70, "deuda": 0.20, "ahorro": 0.10}
+    },
+    "instrumentos_referencia": {
+      "CETES_28_dias_referencia": 0.105,
+      "inflacion_objetivo_banxico": 0.03,
+      "fuente_tasas": "https://www.banxico.org.mx"
+    },
+    "contexto_mexico": {
+      "adultos_con_registro_gastos_pct": 0.39,
+      "adultos_con_inversion_formal_pct": 0.15,
+      "fuente": "ENIF 2021 (CNBV/INEGI)"
+    }
+  },
+  "reglas": [
+    {
+      "id": "R01",
+      "dominio": "diagnostico",
+      "descripcion": "Gastos fijos criticamente altos",
+      "condiciones": [
+        {"variable": "ratio_gasto_fijo", "operador": ">", "valor": 0.70}
+      ],
+      "conclusion": {"variable": "situacion", "valor": "critica"},
+      "accion": "recomendar_control_gastos_urgente",
+      "factor_certeza": 95,
+      "prioridad": 10,
+      "explicacion": "Tus gastos fijos superan el 70% de tu ingreso neto. Esto es una señal critica segun la CONDUSEF."
+    },
+    {
+      "id": "R02",
+      "dominio": "diagnostico",
+      "descripcion": "Ahorro insuficiente sin situacion critica",
+      "condiciones": [
+        {"variable": "ratio_ahorro", "operador": "<", "valor": 0.10},
+        {"variable": "situacion", "operador": "!=", "valor": "critica"}
+      ],
+      "conclusion": {"variable": "situacion", "valor": "en_riesgo"},
+      "accion": "recomendar_incremento_ahorro",
+      "factor_certeza": 85,
+      "prioridad": 8,
+      "explicacion": "Ahorras menos del 10% de tu ingreso mensual. Estas en zona de riesgo financiero."
+    },
+    {
+      "id": "R03",
+      "dominio": "diagnostico",
+      "descripcion": "Situacion financiera moderada",
+      "condiciones": [
+        {"variable": "ratio_gasto_fijo", "operador": ">=", "valor": 0.50},
+        {"variable": "ratio_gasto_fijo", "operador": "<=", "valor": 0.70},
+        {"variable": "ratio_ahorro", "operador": ">=", "valor": 0.10}
+      ],
+      "conclusion": {"variable": "situacion", "valor": "moderada"},
+      "accion": "recomendar_optimizacion_gastos",
+      "factor_certeza": 80,
+      "prioridad": 6,
+      "explicacion": "Tus gastos son manejables pero hay margen de mejora en ahorro e inversion."
+    },
+    {
+      "id": "R04",
+      "dominio": "diagnostico",
+      "descripcion": "Situacion financiera saludable",
+      "condiciones": [
+        {"variable": "ratio_gasto_fijo", "operador": "<", "valor": 0.50},
+        {"variable": "ratio_ahorro", "operador": ">=", "valor": 0.20}
+      ],
+      "conclusion": {"variable": "situacion", "valor": "saludable"},
+      "accion": "recomendar_inversion",
+      "factor_certeza": 90,
+      "prioridad": 5,
+      "explicacion": "Excelente! Tus gastos son controlados y ahorras mas del 20%. Estas listo para invertir."
+    },
+    {
+      "id": "R05",
+      "dominio": "diagnostico",
+      "descripcion": "Ingreso insuficiente para gastos basicos",
+      "condiciones": [
+        {"variable": "ratio_gasto_fijo", "operador": ">", "valor": 1.00}
+      ],
+      "conclusion": {"variable": "situacion", "valor": "critica_extrema"},
+      "accion": "recomendar_reestructura_total",
+      "factor_certeza": 99,
+      "prioridad": 10,
+      "explicacion": "Tus gastos fijos superan tu ingreso. Requieres reestructura financiera urgente."
+    },
+    {
+      "id": "R06",
+      "dominio": "diagnostico",
+      "descripcion": "Sin ahorro en absoluto",
+      "condiciones": [
+        {"variable": "ratio_ahorro", "operador": "==", "valor": 0}
+      ],
+      "conclusion": {"variable": "capacidad_ahorro", "valor": "nula"},
+      "accion": "recomendar_plan_ahorro_basico",
+      "factor_certeza": 95,
+      "prioridad": 9,
+      "explicacion": "No tienes ningun ahorro. El primer paso es ahorrar al menos 100 pesos al mes."
+    },
+    {
+      "id": "R07",
+      "dominio": "diagnostico",
+      "descripcion": "Ingreso bajo con gastos controlados",
+      "condiciones": [
+        {"variable": "ingreso_mensual", "operador": "<", "valor": 8000},
+        {"variable": "ratio_gasto_fijo", "operador": "<", "valor": 0.60}
+      ],
+      "conclusion": {"variable": "categoria_ingreso", "valor": "bajo_controlado"},
+      "accion": "recomendar_incremento_ingreso",
+      "factor_certeza": 75,
+      "prioridad": 6,
+      "explicacion": "Tu ingreso esta por debajo del promedio nacional. Considera fuentes de ingreso adicionales."
+    },
+    {
+      "id": "R08",
+      "dominio": "diagnostico",
+      "descripcion": "Ingreso medio con mala administracion",
+      "condiciones": [
+        {"variable": "ingreso_mensual", "operador": ">=", "valor": 8000},
+        {"variable": "ingreso_mensual", "operador": "<", "valor": 25000},
+        {"variable": "ratio_gasto_fijo", "operador": ">", "valor": 0.70}
+      ],
+      "conclusion": {"variable": "problema_principal", "valor": "administracion"},
+      "accion": "recomendar_presupuesto_50_30_20",
+      "factor_certeza": 88,
+      "prioridad": 8,
+      "explicacion": "Con tu ingreso deberias tener margen de ahorro. El problema es la distribucion del gasto."
+    },
+    {
+      "id": "R09",
+      "dominio": "diagnostico",
+      "descripcion": "Ingreso alto con deuda alta",
+      "condiciones": [
+        {"variable": "ingreso_mensual", "operador": ">=", "valor": 25000},
+        {"variable": "DAI", "operador": ">", "valor": 0.40}
+      ],
+      "conclusion": {"variable": "problema_principal", "valor": "sobre_endeudamiento"},
+      "accion": "recomendar_plan_pago_deuda_agresivo",
+      "factor_certeza": 85,
+      "prioridad": 8,
+      "explicacion": "Aunque tienes buen ingreso, tu nivel de deuda compromete tu patrimonio."
+    },
+    {
+      "id": "R10",
+      "dominio": "diagnostico",
+      "descripcion": "Balance positivo entre ingresos y gastos",
+      "condiciones": [
+        {"variable": "ratio_gasto_fijo", "operador": "<", "valor": 0.50},
+        {"variable": "ratio_ahorro", "operador": ">=", "valor": 0.10},
+        {"variable": "DAI", "operador": "<", "valor": 0.35}
+      ],
+      "conclusion": {"variable": "balance", "valor": "positivo"},
+      "accion": "recomendar_metas_largo_plazo",
+      "factor_certeza": 90,
+      "prioridad": 5,
+      "explicacion": "Tu balance financiero es positivo. Es momento de pensar en metas a largo plazo."
+    },
+    {
+      "id": "R11",
+      "dominio": "diagnostico",
+      "descripcion": "Gasto variable excesivo",
+      "condiciones": [
+        {"variable": "ratio_gasto_variable", "operador": ">", "valor": 0.30},
+        {"variable": "situacion", "operador": "!=", "valor": "saludable"}
+      ],
+      "conclusion": {"variable": "area_mejora", "valor": "gasto_variable"},
+      "accion": "recomendar_reduccion_gasto_variable",
+      "factor_certeza": 80,
+      "prioridad": 7,
+      "explicacion": "Mas del 30% de tu ingreso se va en gastos variables. Aqui esta la oportunidad de ahorro."
+    },
+    {
+      "id": "R12",
+      "dominio": "diagnostico",
+      "descripcion": "Sin registro de gastos",
+      "condiciones": [
+        {"variable": "lleva_registro_gastos", "operador": "==", "valor": false}
+      ],
+      "conclusion": {"variable": "habito_financiero", "valor": "sin_registro"},
+      "accion": "recomendar_app_control_gastos",
+      "factor_certeza": 95,
+      "prioridad": 9,
+      "explicacion": "Solo el 39% de mexicanos lleva registro de gastos (ENIF 2021). Empezar a registrar es el primer paso."
+    },
+    {
+      "id": "R13",
+      "dominio": "diagnostico",
+      "descripcion": "Gastos fijos en zona de atencion",
+      "condiciones": [
+        {"variable": "ratio_gasto_fijo", "operador": ">=", "valor": 0.60},
+        {"variable": "ratio_gasto_fijo", "operador": "<", "valor": 0.70}
+      ],
+      "conclusion": {"variable": "alerta_gastos", "valor": "zona_atencion"},
+      "accion": "recomendar_revision_gastos_fijos",
+      "factor_certeza": 80,
+      "prioridad": 7,
+      "explicacion": "Tus gastos fijos estan en zona de atencion (60-70%). Un imprevisto podria llevarte a zona critica."
+    },
+    {
+      "id": "R14",
+      "dominio": "diagnostico",
+      "descripcion": "Dependientes economicos multiples con ingreso bajo",
+      "condiciones": [
+        {"variable": "num_dependientes", "operador": ">=", "valor": 3},
+        {"variable": "ingreso_mensual", "operador": "<", "valor": 15000}
+      ],
+      "conclusion": {"variable": "carga_familiar", "valor": "alta"},
+      "accion": "recomendar_apoyo_gubernamental",
+      "factor_certeza": 85,
+      "prioridad": 8,
+      "explicacion": "Tienes alta carga familiar con ingreso limitado. Existen programas de apoyo gubernamental disponibles."
+    },
+    {
+      "id": "R15",
+      "dominio": "diagnostico",
+      "descripcion": "Situacion critica con deuda alta: priorizar pago",
+      "condiciones": [
+        {"variable": "situacion", "operador": "==", "valor": "critica"},
+        {"variable": "DAI", "operador": ">", "valor": 0.35}
+      ],
+      "conclusion": {"variable": "prioridad_accion", "valor": "pago_deuda"},
+      "accion": "recomendar_pago_deuda_primero",
+      "factor_certeza": 95,
+      "prioridad": 10,
+      "explicacion": "Con situacion critica y DAI alto, pagar deuda es mas urgente que invertir."
+    },
+    {
+      "id": "R16",
+      "dominio": "diagnostico",
+      "descripcion": "Bajo nivel de educacion financiera",
+      "condiciones": [
+        {"variable": "nivel_educacion_financiera", "operador": "<", "valor": 3}
+      ],
+      "conclusion": {"variable": "necesita_educacion", "valor": true},
+      "accion": "recomendar_recursos_educativos",
+      "factor_certeza": 90,
+      "prioridad": 6,
+      "explicacion": "Tu nivel de educacion financiera es bajo. Te recomendamos recursos gratuitos de CONDUSEF."
+    },
+    {
+      "id": "R17",
+      "dominio": "diagnostico",
+      "descripcion": "Gastos mayores a ingresos por 3 o mas meses",
+      "condiciones": [
+        {"variable": "meses_deficit", "operador": ">=", "valor": 3}
+      ],
+      "conclusion": {"variable": "tendencia", "valor": "deficit_cronico"},
+      "accion": "recomendar_asesoria_financiera_urgente",
+      "factor_certeza": 98,
+      "prioridad": 10,
+      "explicacion": "Llevas 3 o mas meses gastando mas de lo que ganas. Esto es una emergencia financiera."
+    },
+    {
+      "id": "R18",
+      "dominio": "diagnostico",
+      "descripcion": "Ingreso irregular (freelance/negocio propio)",
+      "condiciones": [
+        {"variable": "tipo_ingreso", "operador": "==", "valor": "variable"}
+      ],
+      "conclusion": {"variable": "estrategia_ahorro", "valor": "colchon_variable"},
+      "accion": "recomendar_fondo_emergencia_ampliado",
+      "factor_certeza": 88,
+      "prioridad": 7,
+      "explicacion": "Con ingreso variable necesitas un fondo de emergencia de 6-12 meses, no 3-6."
+    },
+    {
+      "id": "R19",
+      "dominio": "diagnostico",
+      "descripcion": "Ratio 50/30/20 bien distribuido",
+      "condiciones": [
+        {"variable": "ratio_necesidades", "operador": "<=", "valor": 0.50},
+        {"variable": "ratio_deseos", "operador": "<=", "valor": 0.30},
+        {"variable": "ratio_ahorro", "operador": ">=", "valor": 0.20}
+      ],
+      "conclusion": {"variable": "distribucion", "valor": "optima"},
+      "accion": "recomendar_mantenimiento_habitos",
+      "factor_certeza": 92,
+      "prioridad": 4,
+      "explicacion": "Tu distribucion 50/30/20 es optima. Manten estos habitos!"
+    },
+    {
+      "id": "R20",
+      "dominio": "diagnostico",
+      "descripcion": "Gasto en deudas absorbe el ahorro potencial",
+      "condiciones": [
+        {"variable": "pago_mensual_deudas", "operador": ">", "valor": 0},
+        {"variable": "ratio_ahorro", "operador": "<", "valor": 0.05},
+        {"variable": "DAI", "operador": ">", "valor": 0.25}
+      ],
+      "conclusion": {"variable": "bloqueo_ahorro", "valor": "deuda"},
+      "accion": "recomendar_bola_de_nieve_deuda",
+      "factor_certeza": 87,
+      "prioridad": 8,
+      "explicacion": "Tus pagos de deuda estan impidiendo que ahorres. Liquida primero la deuda mas pequena (metodo bola de nieve)."
+    },
+    {
+      "id": "D01",
+      "dominio": "deuda",
+      "descripcion": "DAI en nivel critico",
+      "condiciones": [
+        {"variable": "DAI", "operador": ">", "valor": 0.50}
+      ],
+      "conclusion": {"variable": "nivel_deuda", "valor": "critico"},
+      "accion": "recomendar_reestructura_deuda",
+      "factor_certeza": 95,
+      "prioridad": 10,
+      "explicacion": "Tu DAI supera el 50%. Mas de la mitad de tu ingreso se destina a pagar deudas. Situacion critica."
+    },
+    {
+      "id": "D02",
+      "dominio": "deuda",
+      "descripcion": "DAI en nivel de alerta",
+      "condiciones": [
+        {"variable": "DAI", "operador": ">", "valor": 0.35},
+        {"variable": "DAI", "operador": "<=", "valor": 0.50}
+      ],
+      "conclusion": {"variable": "nivel_deuda", "valor": "alto"},
+      "accion": "recomendar_plan_pago_acelerado",
+      "factor_certeza": 88,
+      "prioridad": 8,
+      "explicacion": "Tu DAI (35-50%) supera el limite recomendado por CONDUSEF. Prioriza el pago de deudas."
+    },
+    {
+      "id": "D03",
+      "dominio": "deuda",
+      "descripcion": "DAI en nivel moderado",
+      "condiciones": [
+        {"variable": "DAI", "operador": ">", "valor": 0.20},
+        {"variable": "DAI", "operador": "<=", "valor": 0.35}
+      ],
+      "conclusion": {"variable": "nivel_deuda", "valor": "moderado"},
+      "accion": "recomendar_no_nueva_deuda",
+      "factor_certeza": 80,
+      "prioridad": 6,
+      "explicacion": "Tu DAI esta en rango moderado. No adquieras nuevas deudas por ahora."
+    },
+    {
+      "id": "D04",
+      "dominio": "deuda",
+      "descripcion": "DAI en nivel saludable",
+      "condiciones": [
+        {"variable": "DAI", "operador": "<=", "valor": 0.20}
+      ],
+      "conclusion": {"variable": "nivel_deuda", "valor": "saludable"},
+      "accion": "recomendar_mantener_nivel_deuda",
+      "factor_certeza": 85,
+      "prioridad": 4,
+      "explicacion": "Tu nivel de deuda es saludable (menor al 20% de tu ingreso). Bien manejado."
+    },
+    {
+      "id": "D05",
+      "dominio": "deuda",
+      "descripcion": "Tasa de interes muy alta en creditos",
+      "condiciones": [
+        {"variable": "tasa_promedio_anual", "operador": ">", "valor": 0.36}
+      ],
+      "conclusion": {"variable": "tipo_deuda", "valor": "tasa_usuraria"},
+      "accion": "recomendar_pago_prioritario_tasa_alta",
+      "factor_certeza": 92,
+      "prioridad": 9,
+      "explicacion": "Tienes creditos con tasa mayor al 36% anual. Estas deudas crecen rapidamente. Pagalas primero."
+    },
+    {
+      "id": "D06",
+      "dominio": "deuda",
+      "descripcion": "Demasiados creditos activos",
+      "condiciones": [
+        {"variable": "num_creditos", "operador": ">", "valor": 4}
+      ],
+      "conclusion": {"variable": "complejidad_deuda", "valor": "alta"},
+      "accion": "recomendar_consolidacion_deuda",
+      "factor_certeza": 80,
+      "prioridad": 7,
+      "explicacion": "Tienes mas de 4 creditos activos. Considera consolidarlos en uno solo con menor tasa."
+    },
+    {
+      "id": "D07",
+      "dominio": "deuda",
+      "descripcion": "Deuda en tarjeta de credito pagando minimo",
+      "condiciones": [
+        {"variable": "tiene_tarjeta_credito", "operador": "==", "valor": true},
+        {"variable": "paga_minimo_tarjeta", "operador": "==", "valor": true}
+      ],
+      "conclusion": {"variable": "riesgo_tarjeta", "valor": "alto"},
+      "accion": "recomendar_pago_total_tarjeta",
+      "factor_certeza": 96,
+      "prioridad": 9,
+      "explicacion": "Pagar solo el minimo de tu tarjeta puede triplicar tu deuda. Paga el total cada mes."
+    },
+    {
+      "id": "D08",
+      "dominio": "deuda",
+      "descripcion": "Deuda hipotecaria con DAI global aceptable",
+      "condiciones": [
+        {"variable": "tiene_hipoteca", "operador": "==", "valor": true},
+        {"variable": "DAI", "operador": "<=", "valor": 0.35}
+      ],
+      "conclusion": {"variable": "deuda_hipotecaria", "valor": "manejable"},
+      "accion": "recomendar_amortizacion_anticipada",
+      "factor_certeza": 78,
+      "prioridad": 5,
+      "explicacion": "Tu hipoteca es manejable. Considera pagos adelantados a capital para reducir intereses totales."
+    },
+    {
+      "id": "D09",
+      "dominio": "deuda",
+      "descripcion": "Metodo avalancha: mayor tasa primero",
+      "condiciones": [
+        {"variable": "num_creditos", "operador": ">=", "valor": 2},
+        {"variable": "tasa_promedio_anual", "operador": ">", "valor": 0.24},
+        {"variable": "nivel_deuda", "operador": "!=", "valor": "critico"}
+      ],
+      "conclusion": {"variable": "metodo_pago", "valor": "avalancha"},
+      "accion": "aplicar_metodo_avalancha",
+      "factor_certeza": 82,
+      "prioridad": 7,
+      "explicacion": "Con multiples creditos de alta tasa, el metodo avalancha ahorra mas intereses."
+    },
+    {
+      "id": "D10",
+      "dominio": "deuda",
+      "descripcion": "Metodo bola de nieve: menor deuda primero",
+      "condiciones": [
+        {"variable": "num_creditos", "operador": ">=", "valor": 2},
+        {"variable": "nivel_educacion_financiera", "operador": "<", "valor": 3},
+        {"variable": "nivel_deuda", "operador": "!=", "valor": "critico"}
+      ],
+      "conclusion": {"variable": "metodo_pago", "valor": "bola_de_nieve"},
+      "accion": "aplicar_metodo_bola_nieve",
+      "factor_certeza": 78,
+      "prioridad": 6,
+      "explicacion": "Para mantener la motivacion, paga primero la deuda mas pequena y luego la siguiente."
+    },
+    {
+      "id": "D11",
+      "dominio": "deuda",
+      "descripcion": "Riesgo de incumplimiento inminente",
+      "condiciones": [
+        {"variable": "ratio_gasto_fijo", "operador": ">", "valor": 0.80},
+        {"variable": "DAI", "operador": ">", "valor": 0.40}
+      ],
+      "conclusion": {"variable": "riesgo_incumplimiento", "valor": "inminente"},
+      "accion": "recomendar_negociacion_con_acreedores",
+      "factor_certeza": 90,
+      "prioridad": 10,
+      "explicacion": "Tu situacion indica riesgo de no poder pagar en los proximos meses. Negocia ya con tus acreedores."
+    },
+    {
+      "id": "D12",
+      "dominio": "deuda",
+      "descripcion": "Credito de nomina con descuento automatico",
+      "condiciones": [
+        {"variable": "tiene_credito_nomina", "operador": "==", "valor": true},
+        {"variable": "DAI", "operador": "<", "valor": 0.35}
+      ],
+      "conclusion": {"variable": "tipo_credito_seguro", "valor": "nomina"},
+      "accion": "recomendar_no_ampliar_credito_nomina",
+      "factor_certeza": 75,
+      "prioridad": 5,
+      "explicacion": "El credito de nomina es seguro pero reduce tu liquidez mensual. No lo amplies ahora."
+    },
+    {
+      "id": "D13",
+      "dominio": "deuda",
+      "descripcion": "Deuda con tasa variable en entorno de alza",
+      "condiciones": [
+        {"variable": "tiene_deuda_tasa_variable", "operador": "==", "valor": true},
+        {"variable": "tendencia_tasas", "operador": "==", "valor": "alza"}
+      ],
+      "conclusion": {"variable": "riesgo_tasa", "valor": "creciente"},
+      "accion": "recomendar_refinanciar_tasa_fija",
+      "factor_certeza": 82,
+      "prioridad": 7,
+      "explicacion": "Con tasas al alza, tu deuda variable crecera. Considera refinanciar a tasa fija."
+    },
+    {
+      "id": "D14",
+      "dominio": "deuda",
+      "descripcion": "Sin deudas activas",
+      "condiciones": [
+        {"variable": "deuda_total", "operador": "==", "valor": 0}
+      ],
+      "conclusion": {"variable": "estado_deuda", "valor": "libre"},
+      "accion": "recomendar_inicio_inversion",
+      "factor_certeza": 95,
+      "prioridad": 5,
+      "explicacion": "Felicidades! Estas libre de deudas. Es el momento ideal para comenzar a invertir."
+    },
+    {
+      "id": "D15",
+      "dominio": "deuda",
+      "descripcion": "Endeudamiento para gastos corrientes",
+      "condiciones": [
+        {"variable": "usa_credito_para_gastos_basicos", "operador": "==", "valor": true}
+      ],
+      "conclusion": {"variable": "patron_deuda", "valor": "peligroso"},
+      "accion": "recomendar_corte_ciclo_deuda",
+      "factor_certeza": 97,
+      "prioridad": 10,
+      "explicacion": "Usar credito para gastos basicos es senal de una espiral de deuda. Hay que romper este ciclo ya."
+    },
+    {
+      "id": "A01",
+      "dominio": "ahorro",
+      "descripcion": "Sin fondo de emergencia",
+      "condiciones": [
+        {"variable": "meses_fondo_emergencia", "operador": "<", "valor": 1}
+      ],
+      "conclusion": {"variable": "fondo_emergencia", "valor": "inexistente"},
+      "accion": "recomendar_crear_fondo_emergencia",
+      "factor_certeza": 95,
+      "prioridad": 10,
+      "explicacion": "No tienes fondo de emergencia. Este debe ser tu primer objetivo de ahorro."
+    },
+    {
+      "id": "A02",
+      "dominio": "ahorro",
+      "descripcion": "Fondo de emergencia insuficiente",
+      "condiciones": [
+        {"variable": "meses_fondo_emergencia", "operador": ">=", "valor": 1},
+        {"variable": "meses_fondo_emergencia", "operador": "<", "valor": 3}
+      ],
+      "conclusion": {"variable": "fondo_emergencia", "valor": "insuficiente"},
+      "accion": "recomendar_completar_fondo_emergencia",
+      "factor_certeza": 88,
+      "prioridad": 8,
+      "explicacion": "Tu fondo de emergencia cubre menos de 3 meses. La meta minima es 3 meses de gastos fijos."
+    },
+    {
+      "id": "A03",
+      "dominio": "ahorro",
+      "descripcion": "Fondo de emergencia adecuado",
+      "condiciones": [
+        {"variable": "meses_fondo_emergencia", "operador": ">=", "valor": 3},
+        {"variable": "meses_fondo_emergencia", "operador": "<=", "valor": 6}
+      ],
+      "conclusion": {"variable": "fondo_emergencia", "valor": "adecuado"},
+      "accion": "recomendar_mantener_fondo_empezar_inversion",
+      "factor_certeza": 90,
+      "prioridad": 5,
+      "explicacion": "Tu fondo de emergencia esta entre 3-6 meses. Es momento de comenzar a invertir el excedente."
+    },
+    {
+      "id": "A04",
+      "dominio": "ahorro",
+      "descripcion": "Ahorro automatico recomendado",
+      "condiciones": [
+        {"variable": "ahorro_automatico", "operador": "==", "valor": false},
+        {"variable": "ratio_ahorro", "operador": "<", "valor": 0.15}
+      ],
+      "conclusion": {"variable": "estrategia", "valor": "automatizar_ahorro"},
+      "accion": "recomendar_transferencia_automatica",
+      "factor_certeza": 85,
+      "prioridad": 7,
+      "explicacion": "Configura una transferencia automatica al dia de cobro. Lo que no ves, no lo gastas."
+    },
+    {
+      "id": "A05",
+      "dominio": "ahorro",
+      "descripcion": "Meta de ahorro a corto plazo",
+      "condiciones": [
+        {"variable": "horizonte_meta", "operador": "<", "valor": 12},
+        {"variable": "fondo_emergencia", "operador": "==", "valor": "adecuado"}
+      ],
+      "conclusion": {"variable": "tipo_ahorro", "valor": "corto_plazo"},
+      "accion": "recomendar_cetes_28_dias",
+      "factor_certeza": 82,
+      "prioridad": 6,
+      "explicacion": "Para metas menores a 12 meses, CETES a 28 dias o cuenta de alto rendimiento son ideales."
+    },
+    {
+      "id": "A06",
+      "dominio": "ahorro",
+      "descripcion": "Aplica regla 50/30/20 clasica",
+      "condiciones": [
+        {"variable": "tipo_ingreso", "operador": "==", "valor": "fijo"},
+        {"variable": "situacion", "operador": "==", "valor": "moderada"}
+      ],
+      "conclusion": {"variable": "regla_presupuesto", "valor": "50_30_20"},
+      "accion": "aplicar_regla_50_30_20",
+      "factor_certeza": 88,
+      "prioridad": 7,
+      "explicacion": "Aplica la regla 50/30/20: 50% necesidades, 30% deseos, 20% ahorro e inversion."
+    },
+    {
+      "id": "A07",
+      "dominio": "ahorro",
+      "descripcion": "Regla adaptada 70/20/10 para situacion critica",
+      "condiciones": [
+        {"variable": "situacion", "operador": "==", "valor": "critica"}
+      ],
+      "conclusion": {"variable": "regla_presupuesto", "valor": "70_20_10"},
+      "accion": "aplicar_regla_70_20_10",
+      "factor_certeza": 84,
+      "prioridad": 8,
+      "explicacion": "En situacion critica: 70% necesidades, 20% deuda, 10% ahorro minimo. Es temporal."
+    },
+    {
+      "id": "A08",
+      "dominio": "ahorro",
+      "descripcion": "Ahorro para retiro insuficiente mayores de 35",
+      "condiciones": [
+        {"variable": "edad", "operador": ">=", "valor": 35},
+        {"variable": "ahorro_retiro", "operador": "<", "valor": 0.05}
+      ],
+      "conclusion": {"variable": "urgencia_retiro", "valor": "alta"},
+      "accion": "recomendar_afore_aportaciones_voluntarias",
+      "factor_certeza": 90,
+      "prioridad": 8,
+      "explicacion": "Tienes mas de 35 anos y ahorras menos del 5% para retiro. Incrementa aportaciones al AFORE ahora."
+    },
+    {
+      "id": "A09",
+      "dominio": "ahorro",
+      "descripcion": "Gastos hormiga detectados",
+      "condiciones": [
+        {"variable": "gasto_hormiga_estimado", "operador": ">", "valor": 1000}
+      ],
+      "conclusion": {"variable": "fuga_dinero", "valor": "gastos_hormiga"},
+      "accion": "recomendar_eliminar_gastos_hormiga",
+      "factor_certeza": 78,
+      "prioridad": 6,
+      "explicacion": "Tienes gastos hormiga de mas de $1,000 al mes (cafe, suscripciones, etc.). Eliminarlos puede ser tu fuente de ahorro."
+    },
+    {
+      "id": "A10",
+      "dominio": "ahorro",
+      "descripcion": "Meta de ahorro alcanzable en plazo dado",
+      "condiciones": [
+        {"variable": "ahorro_mensual_posible", "operador": ">", "valor": 0},
+        {"variable": "meses_para_meta", "operador": "<=", "valor": 24}
+      ],
+      "conclusion": {"variable": "meta", "valor": "alcanzable"},
+      "accion": "generar_plan_ahorro_personalizado",
+      "factor_certeza": 85,
+      "prioridad": 6,
+      "explicacion": "Tu meta es alcanzable en el plazo definido. Aqui esta tu plan de ahorro mensual."
+    },
+    {
+      "id": "A11",
+      "dominio": "ahorro",
+      "descripcion": "Meta de ahorro no alcanzable: ajustar plazo o monto",
+      "condiciones": [
+        {"variable": "ahorro_mensual_posible", "operador": "<", "valor": 0},
+        {"variable": "meses_para_meta", "operador": "<", "valor": 12}
+      ],
+      "conclusion": {"variable": "meta", "valor": "no_alcanzable"},
+      "accion": "recomendar_ajuste_meta_o_plazo",
+      "factor_certeza": 88,
+      "prioridad": 7,
+      "explicacion": "Con tu nivel de ahorro actual, la meta no es alcanzable en el plazo dado. Ajusta el plazo o el monto objetivo."
+    },
+    {
+      "id": "A12",
+      "dominio": "ahorro",
+      "descripcion": "Guardar dinero en casa es riesgoso",
+      "condiciones": [
+        {"variable": "guarda_dinero_en_casa", "operador": "==", "valor": true}
+      ],
+      "conclusion": {"variable": "instrumento_ahorro", "valor": "inadecuado"},
+      "accion": "recomendar_cuenta_bancaria_basica",
+      "factor_certeza": 90,
+      "prioridad": 8,
+      "explicacion": "Guardar en casa no genera rendimientos y es inseguro. Abre una cuenta de ahorro basica (BBVA, Baz, Spin)."
+    },
+    {
+      "id": "A13",
+      "dominio": "ahorro",
+      "descripcion": "Redondeo como estrategia de ahorro",
+      "condiciones": [
+        {"variable": "ratio_ahorro", "operador": "<", "valor": 0.05},
+        {"variable": "situacion", "operador": "!=", "valor": "critica_extrema"}
+      ],
+      "conclusion": {"variable": "tecnica_ahorro", "valor": "redondeo"},
+      "accion": "recomendar_ahorro_por_redondeo",
+      "factor_certeza": 72,
+      "prioridad": 5,
+      "explicacion": "Si ahorrar parece imposible, prueba el redondeo: guarda el cambio de cada compra automaticamente."
+    },
+    {
+      "id": "A14",
+      "dominio": "ahorro",
+      "descripcion": "Ahorro para educacion de dependientes",
+      "condiciones": [
+        {"variable": "num_dependientes", "operador": ">", "valor": 0},
+        {"variable": "ahorro_educacion", "operador": "==", "valor": false}
+      ],
+      "conclusion": {"variable": "meta_educacion", "valor": "sin_plan"},
+      "accion": "recomendar_plan_educacion",
+      "factor_certeza": 78,
+      "prioridad": 6,
+      "explicacion": "Tienes dependientes pero no ahorras para su educacion. Considera un plan de ahorro educativo."
+    },
+    {
+      "id": "A15",
+      "dominio": "ahorro",
+      "descripcion": "Excedente de ahorro: diversificar instrumentos",
+      "condiciones": [
+        {"variable": "ratio_ahorro", "operador": ">", "valor": 0.30},
+        {"variable": "fondo_emergencia", "operador": "==", "valor": "adecuado"}
+      ],
+      "conclusion": {"variable": "excedente_ahorro", "valor": "disponible"},
+      "accion": "recomendar_diversificacion_instrumentos",
+      "factor_certeza": 87,
+      "prioridad": 5,
+      "explicacion": "Ahorras mas del 30% y tienes fondo de emergencia. Es hora de diversificar: CETES, fondos de inversion, FIBRAS."
+    },
+    {
+      "id": "P01",
+      "dominio": "perfil_riesgo",
+      "descripcion": "Perfil conservador: mayor de 55 anos",
+      "condiciones": [
+        {"variable": "edad", "operador": ">=", "valor": 55}
+      ],
+      "conclusion": {"variable": "perfil_riesgo", "valor": "conservador"},
+      "accion": "asignar_perfil_conservador",
+      "factor_certeza": 90,
+      "prioridad": 9,
+      "explicacion": "Con mas de 55 anos, la preservacion del capital es prioritaria sobre el crecimiento."
+    },
+    {
+      "id": "P02",
+      "dominio": "perfil_riesgo",
+      "descripcion": "Perfil conservador: baja tolerancia a perdidas",
+      "condiciones": [
+        {"variable": "tolerancia_perdida", "operador": "<", "valor": 10}
+      ],
+      "conclusion": {"variable": "perfil_riesgo", "valor": "conservador"},
+      "accion": "asignar_perfil_conservador",
+      "factor_certeza": 92,
+      "prioridad": 9,
+      "explicacion": "No toleras perdidas mayores al 10%. Tu perfil es conservador: instrumentos de deuda y CETES."
+    },
+    {
+      "id": "P03",
+      "dominio": "perfil_riesgo",
+      "descripcion": "Perfil moderado: edad media y tolerancia media",
+      "condiciones": [
+        {"variable": "edad", "operador": ">=", "valor": 35},
+        {"variable": "edad", "operador": "<", "valor": 55},
+        {"variable": "tolerancia_perdida", "operador": ">=", "valor": 10},
+        {"variable": "tolerancia_perdida", "operador": "<", "valor": 25}
+      ],
+      "conclusion": {"variable": "perfil_riesgo", "valor": "moderado"},
+      "accion": "asignar_perfil_moderado",
+      "factor_certeza": 85,
+      "prioridad": 7,
+      "explicacion": "Tu edad y tolerancia al riesgo indican un perfil moderado: mezcla de deuda y renta variable."
+    },
+    {
+      "id": "P04",
+      "dominio": "perfil_riesgo",
+      "descripcion": "Perfil agresivo: joven con alta tolerancia",
+      "condiciones": [
+        {"variable": "edad", "operador": "<", "valor": 35},
+        {"variable": "tolerancia_perdida", "operador": ">=", "valor": 25}
+      ],
+      "conclusion": {"variable": "perfil_riesgo", "valor": "agresivo"},
+      "accion": "asignar_perfil_agresivo",
+      "factor_certeza": 88,
+      "prioridad": 7,
+      "explicacion": "Eres joven y tolerante al riesgo. Puedes invertir en renta variable con horizonte de largo plazo."
+    },
+    {
+      "id": "P05",
+      "dominio": "perfil_riesgo",
+      "descripcion": "Horizonte de inversion muy corto: siempre conservador",
+      "condiciones": [
+        {"variable": "horizonte_temporal", "operador": "<", "valor": 12}
+      ],
+      "conclusion": {"variable": "perfil_riesgo", "valor": "conservador"},
+      "accion": "asignar_perfil_conservador_por_plazo",
+      "factor_certeza": 93,
+      "prioridad": 10,
+      "explicacion": "Con un horizonte menor a 12 meses, no puedes asumir riesgo sin importar tu edad."
+    },
+    {
+      "id": "P06",
+      "dominio": "perfil_riesgo",
+      "descripcion": "Situacion critica impide asumir riesgo",
+      "condiciones": [
+        {"variable": "situacion", "operador": "==", "valor": "critica"}
+      ],
+      "conclusion": {"variable": "perfil_riesgo", "valor": "sin_capacidad_inversion"},
+      "accion": "bloquear_recomendaciones_inversion",
+      "factor_certeza": 98,
+      "prioridad": 10,
+      "explicacion": "Tu situacion financiera critica no permite inversion en este momento. Primero estabiliza tus finanzas."
+    },
+    {
+      "id": "P07",
+      "dominio": "perfil_riesgo",
+      "descripcion": "Dependientes reducen tolerancia al riesgo",
+      "condiciones": [
+        {"variable": "num_dependientes", "operador": ">=", "valor": 2},
+        {"variable": "perfil_riesgo", "operador": "==", "valor": "agresivo"}
+      ],
+      "conclusion": {"variable": "perfil_riesgo", "valor": "moderado"},
+      "accion": "ajustar_perfil_por_dependientes",
+      "factor_certeza": 82,
+      "prioridad": 8,
+      "explicacion": "Tienes 2+ dependientes. Aunque tu perfil es agresivo, ajustamos a moderado por responsabilidad familiar."
+    },
+    {
+      "id": "P08",
+      "dominio": "perfil_riesgo",
+      "descripcion": "Primera vez invirtiendo: ajustar a conservador",
+      "condiciones": [
+        {"variable": "experiencia_inversion", "operador": "==", "valor": "ninguna"},
+        {"variable": "perfil_riesgo", "operador": "!=", "valor": "sin_capacidad_inversion"}
+      ],
+      "conclusion": {"variable": "perfil_efectivo", "valor": "conservador_principiante"},
+      "accion": "recomendar_inicio_gradual",
+      "factor_certeza": 85,
+      "prioridad": 7,
+      "explicacion": "Es tu primera inversion. Empieza conservador (CETES) y sube el riesgo conforme ganas experiencia."
+    },
+    {
+      "id": "P09",
+      "dominio": "perfil_riesgo",
+      "descripcion": "Empleo inestable reduce horizonte efectivo",
+      "condiciones": [
+        {"variable": "estabilidad_empleo", "operador": "==", "valor": "inestable"}
+      ],
+      "conclusion": {"variable": "ajuste_horizonte", "valor": "reducir_a_corto"},
+      "accion": "ajustar_horizonte_por_inestabilidad",
+      "factor_certeza": 80,
+      "prioridad": 7,
+      "explicacion": "Con empleo inestable, tu horizonte de inversion real es mas corto. Prioriza liquidez."
+    },
+    {
+      "id": "P10",
+      "dominio": "perfil_riesgo",
+      "descripcion": "Perfil moderado con horizonte largo: puede incluir renta variable",
+      "condiciones": [
+        {"variable": "perfil_riesgo", "operador": "==", "valor": "moderado"},
+        {"variable": "horizonte_temporal", "operador": ">=", "valor": 36}
+      ],
+      "conclusion": {"variable": "asignacion_activos", "valor": "60_40"},
+      "accion": "recomendar_portafolio_60_40",
+      "factor_certeza": 83,
+      "prioridad": 6,
+      "explicacion": "Con perfil moderado y horizonte de 3+ anos: 60% deuda (CETES/fondos), 40% renta variable (ETFs)."
+    },
+    {
+      "id": "I01",
+      "dominio": "inversion",
+      "descripcion": "CETES directo para conservador con poco capital",
+      "condiciones": [
+        {"variable": "perfil_riesgo", "operador": "==", "valor": "conservador"},
+        {"variable": "capital_disponible", "operador": ">=", "valor": 100},
+        {"variable": "capital_disponible", "operador": "<", "valor": 10000}
+      ],
+      "conclusion": {"variable": "instrumento", "valor": "CETES_directo"},
+      "accion": "recomendar_cetes_directo",
+      "factor_certeza": 93,
+      "prioridad": 8,
+      "explicacion": "CETES Directo (cetesdirecto.com.mx) es el instrumento ideal: desde $100, sin comisiones, respaldado por el gobierno."
+    },
+    {
+      "id": "I02",
+      "dominio": "inversion",
+      "descripcion": "Fondos de deuda para conservador con capital medio",
+      "condiciones": [
+        {"variable": "perfil_riesgo", "operador": "==", "valor": "conservador"},
+        {"variable": "capital_disponible", "operador": ">=", "valor": 10000}
+      ],
+      "conclusion": {"variable": "instrumento", "valor": "fondos_deuda"},
+      "accion": "recomendar_fondos_deuda",
+      "factor_certeza": 85,
+      "prioridad": 7,
+      "explicacion": "Con $10,000+, considera fondos de deuda gubernamental en Actinver, GBM o BBVA Asset Management."
+    },
+    {
+      "id": "I03",
+      "dominio": "inversion",
+      "descripcion": "ETFs para perfil moderado",
+      "condiciones": [
+        {"variable": "perfil_riesgo", "operador": "==", "valor": "moderado"},
+        {"variable": "capital_disponible", "operador": ">=", "valor": 5000},
+        {"variable": "horizonte_temporal", "operador": ">=", "valor": 24}
+      ],
+      "conclusion": {"variable": "instrumento", "valor": "ETFs_diversificados"},
+      "accion": "recomendar_etfs",
+      "factor_certeza": 82,
+      "prioridad": 7,
+      "explicacion": "ETFs en GBM+ o Kuspit ofrecen diversificacion a bajo costo para perfil moderado."
+    },
+    {
+      "id": "I04",
+      "dominio": "inversion",
+      "descripcion": "FIBRAS para inversion en bienes raices accesible",
+      "condiciones": [
+        {"variable": "perfil_riesgo", "operador": "==", "valor": "moderado"},
+        {"variable": "capital_disponible", "operador": ">=", "valor": 10000},
+        {"variable": "horizonte_temporal", "operador": ">=", "valor": 36}
+      ],
+      "conclusion": {"variable": "instrumento", "valor": "FIBRAS"},
+      "accion": "recomendar_fibras",
+      "factor_certeza": 78,
+      "prioridad": 6,
+      "explicacion": "Las FIBRAS permiten invertir en bienes raices desde $1,000. Generan dividendos trimestrales."
+    },
+    {
+      "id": "I05",
+      "dominio": "inversion",
+      "descripcion": "Acciones y ETF renta variable para agresivo",
+      "condiciones": [
+        {"variable": "perfil_riesgo", "operador": "==", "valor": "agresivo"},
+        {"variable": "capital_disponible", "operador": ">=", "valor": 10000},
+        {"variable": "horizonte_temporal", "operador": ">=", "valor": 36}
+      ],
+      "conclusion": {"variable": "instrumento", "valor": "renta_variable_global"},
+      "accion": "recomendar_acciones_etf_global",
+      "factor_certeza": 80,
+      "prioridad": 7,
+      "explicacion": "Perfil agresivo con horizonte largo: ETFs globales (S&P 500, MSCI World) a traves de GBM o BIVA."
+    },
+    {
+      "id": "I06",
+      "dominio": "inversion",
+      "descripcion": "No invertir sin fondo de emergencia completo",
+      "condiciones": [
+        {"variable": "fondo_emergencia", "operador": "!=", "valor": "adecuado"}
+      ],
+      "conclusion": {"variable": "bloqueo_inversion", "valor": "sin_fondo_emergencia"},
+      "accion": "bloquear_inversion_hasta_fondo",
+      "factor_certeza": 95,
+      "prioridad": 10,
+      "explicacion": "Antes de invertir, completa tu fondo de emergencia. Invertir sin el te obliga a vender en mal momento."
+    },
+    {
+      "id": "I07",
+      "dominio": "inversion",
+      "descripcion": "Deduccion fiscal con Plan Personal de Retiro",
+      "condiciones": [
+        {"variable": "paga_ISR", "operador": "==", "valor": true},
+        {"variable": "horizonte_temporal", "operador": ">=", "valor": 60}
+      ],
+      "conclusion": {"variable": "beneficio_fiscal", "valor": "PPR_disponible"},
+      "accion": "recomendar_PPR",
+      "factor_certeza": 88,
+      "prioridad": 7,
+      "explicacion": "El Plan Personal de Retiro (PPR) permite deducir hasta el 10% de tu ingreso anual en ISR."
+    },
+    {
+      "id": "I08",
+      "dominio": "inversion",
+      "descripcion": "Diversificacion minima recomendada",
+      "condiciones": [
+        {"variable": "num_instrumentos", "operador": "<", "valor": 2},
+        {"variable": "perfil_riesgo", "operador": "!=", "valor": "sin_capacidad_inversion"}
+      ],
+      "conclusion": {"variable": "diversificacion", "valor": "insuficiente"},
+      "accion": "recomendar_diversificar",
+      "factor_certeza": 85,
+      "prioridad": 6,
+      "explicacion": "No pongas todos los huevos en una canasta. Diversifica en al menos 2 instrumentos distintos."
+    },
+    {
+      "id": "I09",
+      "dominio": "inversion",
+      "descripcion": "Micro-inversion para principiantes sin capital",
+      "condiciones": [
+        {"variable": "capital_disponible", "operador": "<", "valor": 1000},
+        {"variable": "perfil_riesgo", "operador": "!=", "valor": "sin_capacidad_inversion"}
+      ],
+      "conclusion": {"variable": "instrumento", "valor": "micro_inversion"},
+      "accion": "recomendar_micro_inversion",
+      "factor_certeza": 80,
+      "prioridad": 6,
+      "explicacion": "Con menos de $1,000 puedes comenzar en CETES Directo (desde $100) o Flink/Nvio para micro-inversion."
+    },
+    {
+      "id": "I10",
+      "dominio": "inversion",
+      "descripcion": "Rendimiento real negativo considerando inflacion",
+      "condiciones": [
+        {"variable": "tasa_rendimiento_esperada", "operador": "<=", "valor": 0.05},
+        {"variable": "tasa_inflacion", "operador": ">=", "valor": 0.04}
+      ],
+      "conclusion": {"variable": "rendimiento_real", "valor": "negativo_o_marginal"},
+      "accion": "recomendar_instrumento_mayor_rendimiento",
+      "factor_certeza": 87,
+      "prioridad": 7,
+      "explicacion": "Tu rendimiento esperado apenas supera la inflacion. Busca instrumentos con mayor rendimiento real."
+    },
+    {
+      "id": "PR01",
+      "dominio": "pronostico",
+      "descripcion": "Proyeccion positiva: tendencia de ahorro creciente",
+      "condiciones": [
+        {"variable": "tendencia_ahorro", "operador": "==", "valor": "creciente"},
+        {"variable": "ratio_ahorro", "operador": ">=", "valor": 0.10}
+      ],
+      "conclusion": {"variable": "proyeccion_6m", "valor": "positiva"},
+      "accion": "generar_proyeccion_optimista",
+      "factor_certeza": 85,
+      "prioridad": 6,
+      "explicacion": "Tu tendencia de ahorro es positiva. En 6 meses habras acumulado capital suficiente para tus metas."
+    },
+    {
+      "id": "PR02",
+      "dominio": "pronostico",
+      "descripcion": "Proyeccion negativa: tendencia de gasto creciente",
+      "condiciones": [
+        {"variable": "tendencia_gasto", "operador": "==", "valor": "creciente"},
+        {"variable": "ratio_ahorro", "operador": "<", "valor": 0.10}
+      ],
+      "conclusion": {"variable": "proyeccion_6m", "valor": "negativa"},
+      "accion": "generar_alerta_tendencia_gasto",
+      "factor_certeza": 88,
+      "prioridad": 8,
+      "explicacion": "ALERTA: Tus gastos estan aumentando mientras tu ahorro disminuye. En 6 meses podrias estar en zona critica."
+    },
+    {
+      "id": "PR03",
+      "dominio": "pronostico",
+      "descripcion": "Meta alcanzable con ahorro actual en 6 meses",
+      "condiciones": [
+        {"variable": "ahorro_proyectado_6m", "operador": ">=", "valor": 0},
+        {"variable": "meta_monto", "operador": "<=", "valor": 0}
+      ],
+      "conclusion": {"variable": "meta_6m", "valor": "alcanzada"},
+      "accion": "confirmar_meta_alcanzable",
+      "factor_certeza": 90,
+      "prioridad": 6,
+      "explicacion": "Tu meta sera alcanzada antes de 6 meses con tu ritmo de ahorro actual!"
+    },
+    {
+      "id": "PR04",
+      "dominio": "pronostico",
+      "descripcion": "Alerta: inflacion erosionara ahorros en cuenta normal",
+      "condiciones": [
+        {"variable": "tasa_inflacion", "operador": ">", "valor": 0.04},
+        {"variable": "instrumento", "operador": "==", "valor": "cuenta_bancaria"}
+      ],
+      "conclusion": {"variable": "riesgo_inflacion", "valor": "alto"},
+      "accion": "alertar_perdida_poder_adquisitivo",
+      "factor_certeza": 85,
+      "prioridad": 7,
+      "explicacion": "Con inflacion mayor al 4%, tu dinero en cuenta de cheques pierde poder adquisitivo. Muevelo a CETES."
+    },
+    {
+      "id": "PR05",
+      "dominio": "pronostico",
+      "descripcion": "Proyeccion de liquidacion de deuda con pagos extra",
+      "condiciones": [
+        {"variable": "deuda_total", "operador": ">", "valor": 0},
+        {"variable": "pago_extra_deuda", "operador": ">", "valor": 0}
+      ],
+      "conclusion": {"variable": "fecha_liquidacion", "valor": "calculable"},
+      "accion": "calcular_fecha_liquidacion_deuda",
+      "factor_certeza": 88,
+      "prioridad": 7,
+      "explicacion": "Con pagos extras, puedes liquidar tu deuda antes. Aqui esta tu proyeccion de fecha de liquidacion."
+    },
+    {
+      "id": "PR06",
+      "dominio": "pronostico",
+      "descripcion": "Escenario pesimista: sin cambios en habitos",
+      "condiciones": [
+        {"variable": "cambio_habitos", "operador": "==", "valor": false},
+        {"variable": "situacion", "operador": "!=", "valor": "saludable"}
+      ],
+      "conclusion": {"variable": "escenario", "valor": "pesimista"},
+      "accion": "mostrar_escenario_sin_cambios",
+      "factor_certeza": 87,
+      "prioridad": 7,
+      "explicacion": "Si no cambias tus habitos actuales, en 6 meses tu situacion financiera empeorara."
+    },
+    {
+      "id": "PR07",
+      "dominio": "pronostico",
+      "descripcion": "Escenario optimista: implementando recomendaciones",
+      "condiciones": [
+        {"variable": "cambio_habitos", "operador": "==", "valor": true}
+      ],
+      "conclusion": {"variable": "escenario", "valor": "optimista"},
+      "accion": "mostrar_escenario_con_cambios",
+      "factor_certeza": 82,
+      "prioridad": 6,
+      "explicacion": "Si implementas las recomendaciones, en 6 meses tu situacion financiera mejorara significativamente."
+    },
+    {
+      "id": "PR08",
+      "dominio": "pronostico",
+      "descripcion": "Alerta de gasto estacional alto",
+      "condiciones": [
+        {"variable": "mes_alto_gasto", "operador": "==", "valor": true}
+      ],
+      "conclusion": {"variable": "alerta_estacional", "valor": "gasto_alto"},
+      "accion": "alertar_gasto_estacional",
+      "factor_certeza": 80,
+      "prioridad": 7,
+      "explicacion": "Estas en un mes de alto gasto estacional. Planifica tus gastos navideños o vacacionales con anticipacion."
+    },
+    {
+      "id": "PR09",
+      "dominio": "pronostico",
+      "descripcion": "Proyeccion de independencia financiera",
+      "condiciones": [
+        {"variable": "situacion", "operador": "==", "valor": "saludable"},
+        {"variable": "ratio_ahorro", "operador": ">=", "valor": 0.30}
+      ],
+      "conclusion": {"variable": "meta_largo_plazo", "valor": "independencia_financiera"},
+      "accion": "calcular_anos_independencia_financiera",
+      "factor_certeza": 78,
+      "prioridad": 5,
+      "explicacion": "Con tu tasa de ahorro actual, puedes calcular cuando lograras independencia financiera (regla del 4%)."
+    },
+    {
+      "id": "PR10",
+      "dominio": "pronostico",
+      "descripcion": "Alerta: sin reserva para impuestos (freelance)",
+      "condiciones": [
+        {"variable": "tipo_ingreso", "operador": "==", "valor": "variable"},
+        {"variable": "reserva_impuestos", "operador": "==", "valor": false}
+      ],
+      "conclusion": {"variable": "riesgo_fiscal", "valor": "alto"},
+      "accion": "alertar_reserva_impuestos",
+      "factor_certeza": 90,
+      "prioridad": 8,
+      "explicacion": "Como trabajador independiente, debes reservar ~30% de cada ingreso para ISR y IMSS."
+    }
+  ]
+}
