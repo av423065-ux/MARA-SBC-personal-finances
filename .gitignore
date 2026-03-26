@@ -24,9 +24,10 @@ htmlcov/
 coverage.xml
 *.lcov
 
-# ── IDEs ─────────────────────────────────────────────────────────────
+# ── IDEs y herramientas ───────────────────────────────────────────────
 .vscode/
 .idea/
+.claude/settings.local.json
 *.suo
 *.user
 
