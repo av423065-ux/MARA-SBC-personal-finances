@@ -1,0 +1,92 @@
+finexpert/
+│
+├── backend/
+│   ├── app.py                          ← Punto de entrada Flask, rutas /diagnose y /explain
+│   ├── config.py                       ← Variables de entorno, constantes globales
+│   │
+│   ├── engine/
+│   │   ├── __init__.py
+│   │   ├── inference_engine.py         ← Ciclo Match-Select-Execute (RETE simplificado)
+│   │   ├── working_memory.py           ← Clase WorkingMemory (hechos de sesión)
+│   │   ├── agenda.py                   ← Gestión de reglas activables y resolución de conflictos
+│   │   ├── conflict_resolver.py        ← Estrategia: prioridad → especificidad → certeza
+│   │   └── explainer.py                ← Módulo explicativo: trazabilidad → lenguaje natural
+│   │
+│   ├── knowledge/
+│   │   ├── __init__.py
+│   │   ├── knowledge_base.py           ← Cargador y validador de reglas JSON
+│   │   ├── fact_base.py                ← Umbrales, rangos y constantes del dominio
+│   │   ├── rules/
+│   │   │   ├── diagnostico.json        ← 20 reglas: ratio_gasto_fijo, ratio_ahorro
+│   │   │   ├── deuda.json              ← 15 reglas: DAI, tasa_promedio, num_creditos
+│   │   │   ├── ahorro.json             ← 15 reglas: fondo_emergencia, 50/30/20
+│   │   │   ├── perfil_riesgo.json      ← 10 reglas: edad, horizonte_temporal
+│   │   │   ├── inversion.json          ← 10 reglas: perfil_riesgo, capital_disponible
+│   │   │   └── pronostico.json         ← 10 reglas: tendencia_gasto, meses_objetivo
+│   │   └── ontology/
+│   │       ├── conceptos.json          ← Jerarquía de conceptos financieros
+│   │       └── umbrales_financieros.json ← Constantes CONDUSEF/CNBV/Banxico
+│   │
+│   ├── models/
+│   │   ├── user_profile.py             ← Dataclass: perfil, ingresos, gastos, metas
+│   │   ├── diagnosis.py                ← Dataclass: resultado, certeza, recomendaciones
+│   │   └── rule.py                     ← Dataclass: Rule (id, dominio, condiciones, etc.)
+│   │
+│   ├── utils/
+│   │   ├── calculators.py              ← ratio_gasto_fijo(), calcular_DAI(), proyeccion_6m()
+│   │   ├── validators.py               ← Validación de inputs del wizard
+│   │   └── logger.py                   ← Configuración logging para trazabilidad
+│   │
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── index.html                      ← Shell principal, carga el wizard
+│   ├── assets/
+│   │   ├── css/
+│   │   │   ├── main.css                ← Estilos globales, variables CSS, tipografía
+│   │   │   ├── wizard.css              ← Estilos del wizard paso a paso
+│   │   │   └── dashboard.css          ← Semáforo, tarjetas, gráfica proyección
+│   │   ├── js/
+│   │   │   ├── wizard.js              ← Lógica de navegación entre pasos
+│   │   │   ├── api.js                 ← Fetch a /diagnose y /explain
+│   │   │   ├── dashboard.js           ← Render de tarjetas y semáforo
+│   │   │   ├── charts.js              ← Chart.js: proyección 6 meses + semáforo
+│   │   │   └── explainer.js           ← Despliegue del panel ¿Por qué?
+│   │   └── img/
+│   │       └── logo.svg
+│   └── pages/
+│       ├── step1_perfil.html           ← Edad, estado civil, dependientes
+│       ├── step2_finanzas.html         ← Ingresos, gastos fijos/variables, deudas
+│       ├── step3_metas.html            ← Objetivo financiero, horizonte, monto
+│       └── step4_dashboard.html        ← Semáforo + tarjetas + gráfica + pasos
+│
+├── tests/
+│   ├── conftest.py                     ← Fixtures: perfiles crítico, en_riesgo, saludable
+│   ├── unit/
+│   │   ├── test_rules_diagnostico.py   ← Pruebas de cada regla por dominio
+│   │   ├── test_rules_deuda.py
+│   │   ├── test_rules_ahorro.py
+│   │   ├── test_rules_perfil.py
+│   │   ├── test_rules_inversion.py
+│   │   ├── test_rules_pronostico.py
+│   │   ├── test_working_memory.py
+│   │   ├── test_agenda.py
+│   │   └── test_conflict_resolver.py
+│   ├── integration/
+│   │   ├── test_engine_critico.py      ← Escenario completo: perfil crítico
+│   │   ├── test_engine_riesgo.py       ← Escenario completo: en riesgo
+│   │   ├── test_engine_saludable.py    ← Escenario completo: saludable
+│   │   └── test_api_endpoints.py       ← Pruebas de /diagnose y /explain
+│   └── fixtures/
+│       ├── perfil_critico.json
+│       ├── perfil_riesgo.json
+│       └── perfil_saludable.json
+│
+├── docs/
+│   ├── arquitectura.md
+│   ├── ontologia.md
+│   └── manual_reglas.md
+│
+├── .gitignore
+├── README.md
+└── pytest.ini
