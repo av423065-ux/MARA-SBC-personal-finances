@@ -5,6 +5,9 @@
 Desarrollado como proyecto académico en la **UAEH – ICBI**.
 Autores: **Mario Ávila** · **Eduardo Figueroa**
 
+![Preview modo claro](architecture/preview1.png)
+![Preview modo oscuro](architecture/preview2.png)
+
 ---
 
 ## Características
@@ -254,8 +257,3 @@ pytest --cov=backend      # con cobertura
 | Verde    | Saludable            | gastos fijos ≤ 50 % y ahorro ≥ 20 %      |
 | Gris     | Sin datos            | Información insuficiente                  |
 
----
-
-## Licencia
-
-Proyecto académico — UAEH ICBI. Uso educativo.
