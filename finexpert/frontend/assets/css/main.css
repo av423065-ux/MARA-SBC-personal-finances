@@ -323,6 +323,17 @@ body {
    z-index 1000 → .controls-bar
    ────────────────────────────────────────────────────────────────── */
 
+/* Footer */
+.app-footer {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  letter-spacing: 0.02em;
+}
+
 /* Canvas 3D */
 #bg-canvas {
   position: fixed;
