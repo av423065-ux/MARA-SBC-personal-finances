@@ -10,8 +10,12 @@
   <!-- theme.js primero para evitar flash de tema incorrecto -->
   <script src="assets/js/theme.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="assets/js/three.min.js"></script>
 </head>
 <body>
+
+<!-- Canvas 3D de partículas (fondo) -->
+<canvas id="bg-canvas"></canvas>
 
 <!-- Barra de controles: idioma y tema -->
 <div class="controls-bar">
@@ -388,6 +392,7 @@
 <script src="assets/js/charts.js"></script>
 <script src="assets/js/explainer.js"></script>
 <script src="assets/js/wizard.js"></script>
+<script src="assets/js/background.js"></script>
 <script>
   // Aplicar idioma guardado al cargar
   i18n.applyTranslations();
