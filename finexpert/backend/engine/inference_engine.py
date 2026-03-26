@@ -1,5 +1,5 @@
 """
-Motor de Inferencia de FinExpert — implementación RETE simplificada.
+Motor de Inferencia de MARA — implementación RETE simplificada.
 Ciclo: Match → Select → Execute, con encadenamiento hacia adelante.
 """
 import logging

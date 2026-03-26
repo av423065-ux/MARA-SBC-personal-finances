@@ -20,7 +20,7 @@ VALID_OPERATORS = {">", "<", ">=", "<=", "==", "!="}
 
 
 class KnowledgeBase:
-    """Repositorio central de reglas de producción de FinExpert."""
+    """Repositorio central de reglas de producción de MARA."""
 
     def __init__(self, rules_dir: str | pathlib.Path):
         self._rules_dir = pathlib.Path(rules_dir)

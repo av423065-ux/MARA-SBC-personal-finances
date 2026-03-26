@@ -1,5 +1,5 @@
 """
-FinExpert — Punto de entrada Flask.
+MARA — Punto de entrada Flask.
 Expone dos endpoints REST:
   POST /diagnose  → ejecuta el motor de inferencia y devuelve el diagnóstico
   POST /explain   → devuelve la cadena de razonamiento de una regla específica
@@ -18,6 +18,7 @@ BASE_DIR = pathlib.Path(__file__).parent
 sys.path.insert(0, str(BASE_DIR))
 
 from knowledge.knowledge_base import KnowledgeBase
+from utils.validators import validar_perfil_completo
 from knowledge.fact_base import FactBase
 from engine.inference_engine import InferenceEngine
 from engine.explainer import Explainer
@@ -30,7 +31,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  %(levelname)-8s  %(name)s  %(message)s",
 )
-logger = logging.getLogger("finexpert.api")
+logger = logging.getLogger("mara.api")
 
 # ------------------------------------------------------------------
 # Inicialización del sistema (se hace una sola vez al arrancar)
@@ -42,9 +43,9 @@ try:
     kb      = KnowledgeBase(RULES_DIR)
     fb      = FactBase(FACTS_FILE)
     engine  = InferenceEngine(kb)
-    logger.info("Sistema FinExpert inicializado: %s", kb.stats())
+    logger.info("Sistema MARA inicializado: %s", kb.stats())
 except Exception as exc:
-    logger.critical("Error crítico al inicializar FinExpert: %s", exc)
+    logger.critical("Error crítico al inicializar MARA: %s", exc)
     raise
 
 # ------------------------------------------------------------------
@@ -58,11 +59,16 @@ CORS(app)   # Permite peticiones desde el front-end local
 # Helpers de validación
 # ------------------------------------------------------------------
 def _parse_profile(data: dict) -> tuple[UserProfile | None, str]:
-    """Construye un UserProfile desde el JSON del request; devuelve error si falla."""
+    """Construye un UserProfile desde el JSON del request; valida y devuelve error si falla."""
     required = ["ingreso_mensual", "gastos_fijos", "gastos_variables"]
     missing = [f for f in required if f not in data]
     if missing:
         return None, f"Campos requeridos faltantes: {missing}"
+
+    errores = validar_perfil_completo(data)
+    if errores:
+        return None, "; ".join(errores)
+
     try:
         profile = UserProfile(**{
             k: v for k, v in data.items()
@@ -85,7 +91,7 @@ def health():
     """Verificación de disponibilidad."""
     return jsonify({
         "status": "ok",
-        "sistema": "FinExpert",
+        "sistema": "MARA",
         "reglas_cargadas": kb.stats()["total"],
     })
 

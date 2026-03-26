@@ -1,0 +1,62 @@
+{
+  "conceptos": {
+    "situacion_financiera": {
+      "descripcion": "Estado general de las finanzas personales del usuario",
+      "valores": {
+        "critica_extrema": "Gastos superan ingresos o gastos fijos > 80% del ingreso",
+        "critica":         "Gastos fijos entre 70-80% del ingreso o DAI > 50%",
+        "en_riesgo":       "Gastos fijos entre 60-70% del ingreso o ahorro < 10%",
+        "moderada":        "Gastos fijos entre 50-60% o ahorro entre 10-20%",
+        "saludable":       "Gastos fijos ≤ 50% del ingreso y ahorro ≥ 20%",
+        "sin_datos":       "Información insuficiente para diagnóstico"
+      }
+    },
+    "semaforo": {
+      "descripcion": "Representación visual del estado financiero",
+      "valores": {
+        "rojo":    ["critica_extrema", "critica"],
+        "amarillo":["en_riesgo", "moderada"],
+        "verde":   ["saludable"],
+        "gris":    ["sin_datos"]
+      }
+    },
+    "DAI": {
+      "descripcion": "Debt-to-Income Ratio: proporción del ingreso destinada a pagar deudas",
+      "formula":     "pago_mensual_deudas / ingreso_mensual",
+      "fuente":      "CONDUSEF"
+    },
+    "ratio_ahorro": {
+      "descripcion": "Proporción del ingreso disponible después de todos los gastos",
+      "formula":     "(ingreso - gastos_totales) / ingreso",
+      "referencia":  "Regla 50/30/20: objetivo 20%"
+    },
+    "ratio_gasto_fijo": {
+      "descripcion": "Proporción del ingreso destinada a gastos fijos (renta, servicios, transporte)",
+      "formula":     "gastos_fijos / ingreso_mensual",
+      "referencia":  "Regla 50/30/20: máximo 50%"
+    },
+    "nivel_endeudamiento": {
+      "descripcion": "Clasificación del nivel de deuda según DAI",
+      "valores": {
+        "saludable": "DAI ≤ 20%",
+        "moderado":  "DAI entre 20-35%",
+        "alto":      "DAI entre 35-50%",
+        "critico":   "DAI > 50%"
+      }
+    },
+    "perfil_riesgo": {
+      "descripcion": "Tolerancia al riesgo para decisiones de inversión",
+      "valores": {
+        "agresivo":         "Joven (<35 años) con horizonte largo (>60 meses)",
+        "moderado":         "Adulto (35-50 años) con horizonte medio (>24 meses)",
+        "conservador":      "Mayor (>50 años) u horizonte corto (≤36 meses)",
+        "muy_conservador":  "Próximo al retiro (>60 años)"
+      }
+    },
+    "fondo_emergencia": {
+      "descripcion": "Reserva líquida para cubrir gastos ante pérdida de ingresos",
+      "referencia":  "3-6 meses para trabajadores formales; 6-12 para independientes",
+      "fuente":      "Banxico / CONDUSEF"
+    }
+  }
+}

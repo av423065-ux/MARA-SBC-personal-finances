@@ -1,0 +1,289 @@
+[
+  {
+    "id": "D01",
+    "dominio": "diagnostico",
+    "descripcion": "Gastos fijos extremos: más del 90% del ingreso",
+    "condiciones": [
+      {"variable": "ratio_gasto_fijo", "operador": ">", "valor": 0.90}
+    ],
+    "conclusion": {"variable": "situacion", "valor": "critica_extrema"},
+    "accion": "Tus gastos fijos superan el 90% de tu ingreso. Esto es una emergencia financiera: renegocia deudas y reduce gastos de forma inmediata.",
+    "factor_certeza": 95,
+    "prioridad": 10,
+    "explicacion": "Más del 90% de tu ingreso se destina solo a gastos fijos (renta, servicios, transporte), sin contar alimentación ni deudas. Esto hace imposible cualquier margen de maniobra."
+  },
+  {
+    "id": "D02",
+    "dominio": "diagnostico",
+    "descripcion": "Gastos fijos entre 80% y 90% del ingreso",
+    "condiciones": [
+      {"variable": "ratio_gasto_fijo", "operador": ">",  "valor": 0.80},
+      {"variable": "ratio_gasto_fijo", "operador": "<=", "valor": 0.90},
+      {"variable": "situacion",        "operador": "!=", "valor": "critica_extrema"}
+    ],
+    "conclusion": {"variable": "situacion", "valor": "critica_extrema"},
+    "accion": "Tus gastos fijos consumen entre 80% y 90% de tu ingreso. Reestructura urgentemente tus compromisos fijos.",
+    "factor_certeza": 90,
+    "prioridad": 10,
+    "explicacion": "Más del 80% de tu ingreso se destina a gastos fijos (renta, servicios, transporte). No queda margen para imprevistos ni ahorro."
+  },
+  {
+    "id": "D03",
+    "dominio": "diagnostico",
+    "descripcion": "Gastos fijos muy altos: zona crítica",
+    "condiciones": [
+      {"variable": "ratio_gasto_fijo", "operador": ">",  "valor": 0.70},
+      {"variable": "ratio_gasto_fijo", "operador": "<=", "valor": 0.80},
+      {"variable": "situacion",        "operador": "!=", "valor": "critica_extrema"}
+    ],
+    "conclusion": {"variable": "situacion", "valor": "critica"},
+    "accion": "Reduce tus gastos fijos urgentemente; representan entre 70% y 80% de tu ingreso.",
+    "factor_certeza": 88,
+    "prioridad": 9,
+    "explicacion": "Entre 70% y 80% de tu ingreso se va en gastos fijos, dejando muy poco margen para alimentación variable, ahorro o emergencias."
+  },
+  {
+    "id": "D04",
+    "dominio": "diagnostico",
+    "descripcion": "Nivel de endeudamiento crítico (DAI > 50%)",
+    "condiciones": [
+      {"variable": "DAI",       "operador": ">",  "valor": 0.50},
+      {"variable": "situacion", "operador": "!=", "valor": "critica_extrema"}
+    ],
+    "conclusion": {"variable": "situacion", "valor": "critica"},
+    "accion": "Más del 50% de tu ingreso se destina a pagar deudas. Busca asesoría financiera de inmediato.",
+    "factor_certeza": 87,
+    "prioridad": 9,
+    "explicacion": "Tu Deuda/Ingreso (DAI) supera el 50%. La CONDUSEF considera saludable un máximo del 20-30%. Con este nivel el riesgo de insolvencia es alto."
+  },
+  {
+    "id": "D05",
+    "dominio": "diagnostico",
+    "descripcion": "Gastos fijos elevados: zona de riesgo",
+    "condiciones": [
+      {"variable": "ratio_gasto_fijo", "operador": ">",  "valor": 0.60},
+      {"variable": "ratio_gasto_fijo", "operador": "<=", "valor": 0.70},
+      {"variable": "situacion",        "operador": "!=", "valor": "critica_extrema"},
+      {"variable": "situacion",        "operador": "!=", "valor": "critica"}
+    ],
+    "conclusion": {"variable": "situacion", "valor": "en_riesgo"},
+    "accion": "Tus gastos fijos superan el 60% del ingreso. Revisa qué compromisos puedes reducir o eliminar.",
+    "factor_certeza": 80,
+    "prioridad": 8,
+    "explicacion": "Entre 60% y 70% de tu ingreso se va en gastos fijos. Aunque no es crítico, te deja poco margen para ahorro y te expone a cualquier imprevisto."
+  },
+  {
+    "id": "D06",
+    "dominio": "diagnostico",
+    "descripcion": "Ahorro por debajo del mínimo recomendado",
+    "condiciones": [
+      {"variable": "ratio_ahorro", "operador": "<",  "valor": 0.10},
+      {"variable": "ratio_ahorro", "operador": ">=", "valor": 0},
+      {"variable": "situacion",    "operador": "!=", "valor": "critica_extrema"},
+      {"variable": "situacion",    "operador": "!=", "valor": "critica"}
+    ],
+    "conclusion": {"variable": "situacion", "valor": "en_riesgo"},
+    "accion": "Tu tasa de ahorro es menor al 10%. Establece al menos un ahorro del 10% de tu ingreso mensual.",
+    "factor_certeza": 75,
+    "prioridad": 8,
+    "explicacion": "Ahorras menos del 10% de tu ingreso. La recomendación mínima es 10%; la óptima según la regla 50/30/20 es 20%. Estás en zona de riesgo ante cualquier emergencia."
+  },
+  {
+    "id": "D07",
+    "dominio": "diagnostico",
+    "descripcion": "Gastos fijos moderados, ahorro limitado",
+    "condiciones": [
+      {"variable": "ratio_gasto_fijo", "operador": ">",  "valor": 0.50},
+      {"variable": "ratio_gasto_fijo", "operador": "<=", "valor": 0.60},
+      {"variable": "situacion",        "operador": "!=", "valor": "critica_extrema"},
+      {"variable": "situacion",        "operador": "!=", "valor": "critica"},
+      {"variable": "situacion",        "operador": "!=", "valor": "en_riesgo"}
+    ],
+    "conclusion": {"variable": "situacion", "valor": "moderada"},
+    "accion": "Tu situación es moderada. Ajusta tu presupuesto para acercarte a la regla 50/30/20.",
+    "factor_certeza": 70,
+    "prioridad": 7,
+    "explicacion": "Entre 50% y 60% de tu ingreso se va en gastos fijos. Estás en zona moderada: con ajustes concretos puedes mejorar significativamente."
+  },
+  {
+    "id": "D08",
+    "dominio": "diagnostico",
+    "descripcion": "Ahorro moderado: entre 10% y 20%",
+    "condiciones": [
+      {"variable": "ratio_ahorro",     "operador": ">=", "valor": 0.10},
+      {"variable": "ratio_ahorro",     "operador": "<",  "valor": 0.20},
+      {"variable": "ratio_gasto_fijo", "operador": "<=", "valor": 0.60},
+      {"variable": "situacion",        "operador": "!=", "valor": "critica_extrema"},
+      {"variable": "situacion",        "operador": "!=", "valor": "critica"},
+      {"variable": "situacion",        "operador": "!=", "valor": "en_riesgo"}
+    ],
+    "conclusion": {"variable": "situacion", "valor": "moderada"},
+    "accion": "Incrementa tu tasa de ahorro del 10% actual al 20% recomendado.",
+    "factor_certeza": 68,
+    "prioridad": 7,
+    "explicacion": "Ahorras entre 10% y 20% de tu ingreso. Estás por encima del mínimo pero aún lejos del óptimo del 20% recomendado."
+  },
+  {
+    "id": "D09",
+    "dominio": "diagnostico",
+    "descripcion": "Situación financiera saludable",
+    "condiciones": [
+      {"variable": "ratio_gasto_fijo", "operador": "<=", "valor": 0.50},
+      {"variable": "ratio_ahorro",     "operador": ">=", "valor": 0.20},
+      {"variable": "situacion",        "operador": "!=", "valor": "critica_extrema"},
+      {"variable": "situacion",        "operador": "!=", "valor": "critica"},
+      {"variable": "situacion",        "operador": "!=", "valor": "en_riesgo"},
+      {"variable": "situacion",        "operador": "!=", "valor": "moderada"}
+    ],
+    "conclusion": {"variable": "situacion", "valor": "saludable"},
+    "accion": "¡Excelente! Mantén tus hábitos financieros y considera incrementar tus inversiones.",
+    "factor_certeza": 85,
+    "prioridad": 6,
+    "explicacion": "Tus gastos fijos representan 50% o menos de tu ingreso y ahorras 20% o más. Estás siguiendo la regla 50/30/20 y tu situación es financieramente sana."
+  },
+  {
+    "id": "D10",
+    "dominio": "diagnostico",
+    "descripcion": "Alerta: nivel alto de endeudamiento relativo",
+    "condiciones": [
+      {"variable": "DAI", "operador": ">", "valor": 0.35}
+    ],
+    "conclusion": {"variable": "alerta_DAI_alto", "valor": true},
+    "accion": "Tu Deuda/Ingreso (DAI) supera el 35%. Trabaja en reducir tu carga de deuda.",
+    "factor_certeza": 85,
+    "prioridad": 7,
+    "explicacion": "Tu índice DAI (pago mensual de deudas / ingreso) supera el 35%, umbral a partir del cual la deuda representa un riesgo relevante según la CONDUSEF."
+  },
+  {
+    "id": "D11",
+    "dominio": "diagnostico",
+    "descripcion": "Pago mínimo de tarjeta: trampa de deuda",
+    "condiciones": [
+      {"variable": "paga_minimo_tarjeta", "operador": "==", "valor": true}
+    ],
+    "conclusion": {"variable": "alerta_minimo_tarjeta", "valor": true},
+    "accion": "Pagar solo el mínimo de tu tarjeta multiplica la deuda. Paga al menos el doble del mínimo.",
+    "factor_certeza": 92,
+    "prioridad": 8,
+    "explicacion": "Pagar solo el mínimo en tarjetas de crédito con tasas del 30-60% anual puede hacer que una deuda de $10,000 tarde más de 10 años en liquidarse."
+  },
+  {
+    "id": "D12",
+    "dominio": "diagnostico",
+    "descripcion": "Número excesivo de créditos activos",
+    "condiciones": [
+      {"variable": "num_creditos", "operador": ">", "valor": 4}
+    ],
+    "conclusion": {"variable": "alerta_creditos_excesivos", "valor": true},
+    "accion": "Más de 4 créditos activos dificultan el control financiero. Consolida o liquida algunos.",
+    "factor_certeza": 78,
+    "prioridad": 7,
+    "explicacion": "Manejar más de 4 créditos simultáneos aumenta el riesgo de impago, afecta tu historial crediticio y genera comisiones múltiples."
+  },
+  {
+    "id": "D13",
+    "dominio": "diagnostico",
+    "descripcion": "Uso de crédito para gastos básicos: señal de alerta máxima",
+    "condiciones": [
+      {"variable": "usa_credito_para_gastos_basicos", "operador": "==", "valor": true}
+    ],
+    "conclusion": {"variable": "alerta_credito_gastos_basicos", "valor": true},
+    "accion": "Usar crédito para gastos básicos indica un ciclo de deuda crónico. Busca asesoría financiera.",
+    "factor_certeza": 95,
+    "prioridad": 9,
+    "explicacion": "Financiar alimentos, transporte o servicios básicos con crédito señala que los ingresos son insuficientes para cubrir necesidades elementales."
+  },
+  {
+    "id": "D14",
+    "dominio": "diagnostico",
+    "descripcion": "Tasa de interés usuraria detectada",
+    "condiciones": [
+      {"variable": "tasa_promedio_anual", "operador": ">", "valor": 0.36}
+    ],
+    "conclusion": {"variable": "alerta_tasa_usuraria", "valor": true},
+    "accion": "Tus créditos tienen tasas superiores al 36% anual. Refinancia o negocia condiciones mejores.",
+    "factor_certeza": 88,
+    "prioridad": 8,
+    "explicacion": "Una tasa superior al 36% anual se considera abusiva en México. Por cada $10,000 de deuda pagas más de $3,600 al año solo en intereses."
+  },
+  {
+    "id": "D15",
+    "dominio": "diagnostico",
+    "descripcion": "Déficit recurrente: varios meses con gastos > ingresos",
+    "condiciones": [
+      {"variable": "meses_deficit", "operador": ">", "valor": 3}
+    ],
+    "conclusion": {"variable": "alerta_deficit_recurrente", "valor": true},
+    "accion": "Llevas más de 3 meses con déficit. Esto no es un problema puntual sino estructural.",
+    "factor_certeza": 90,
+    "prioridad": 9,
+    "explicacion": "Un déficit sostenido durante más de 3 meses indica que el problema no es coyuntural; es necesario un reajuste profundo del presupuesto."
+  },
+  {
+    "id": "D16",
+    "dominio": "diagnostico",
+    "descripcion": "Hábito positivo: registro de gastos activo",
+    "condiciones": [
+      {"variable": "lleva_registro_gastos", "operador": "==", "valor": true},
+      {"variable": "ratio_ahorro",          "operador": ">=", "valor": 0.10}
+    ],
+    "conclusion": {"variable": "habito_positivo_registro", "valor": true},
+    "accion": "Excelente hábito llevar registro de gastos. Continúa y establece metas mensuales.",
+    "factor_certeza": 75,
+    "prioridad": 4,
+    "explicacion": "Llevar registro de gastos junto con un ahorro superior al 10% indica disciplina financiera y mayor capacidad de mejora."
+  },
+  {
+    "id": "D17",
+    "dominio": "diagnostico",
+    "descripcion": "Ahorro automático: disciplina financiera comprobada",
+    "condiciones": [
+      {"variable": "ahorro_automatico", "operador": "==", "valor": true}
+    ],
+    "conclusion": {"variable": "disciplina_ahorro", "valor": "alta"},
+    "accion": "Mantén tu ahorro automático y considera aumentar el porcentaje gradualmente.",
+    "factor_certeza": 80,
+    "prioridad": 4,
+    "explicacion": "Automatizar el ahorro elimina la dependencia de la fuerza de voluntad y garantiza consistencia independientemente de los gastos del mes."
+  },
+  {
+    "id": "D18",
+    "dominio": "diagnostico",
+    "descripcion": "Educación financiera alta: mayor probabilidad de mejora",
+    "condiciones": [
+      {"variable": "nivel_educacion_financiera", "operador": ">=", "valor": 4}
+    ],
+    "conclusion": {"variable": "perfil_educado_financiero", "valor": true},
+    "accion": "Tu educación financiera es alta. Aplica ese conocimiento para optimizar tu situación.",
+    "factor_certeza": 72,
+    "prioridad": 3,
+    "explicacion": "Un nivel de educación financiera ≥ 4/5 se correlaciona con mejores decisiones de ahorro, menor endeudamiento y mayor acumulación patrimonial según la ENIF 2021."
+  },
+  {
+    "id": "D19",
+    "dominio": "diagnostico",
+    "descripcion": "Cambio de hábitos en curso: señal de mejora",
+    "condiciones": [
+      {"variable": "cambio_habitos", "operador": "==", "valor": true}
+    ],
+    "conclusion": {"variable": "probabilidad_mejora_habitos", "valor": "alta"},
+    "accion": "Mantén el cambio de hábitos. Los primeros 3 meses son los más difíciles.",
+    "factor_certeza": 70,
+    "prioridad": 3,
+    "explicacion": "Identificar la necesidad de cambiar hábitos y actuar en consecuencia es el primer paso. La constancia durante 90 días es clave para consolidar nuevas rutinas financieras."
+  },
+  {
+    "id": "D20",
+    "dominio": "diagnostico",
+    "descripcion": "Ingreso variable: requiere fondo de emergencia mayor",
+    "condiciones": [
+      {"variable": "tipo_ingreso",          "operador": "==", "valor": "variable"},
+      {"variable": "meses_fondo_emergencia","operador": "<",  "valor": 6}
+    ],
+    "conclusion": {"variable": "alerta_fondo_insuficiente_freelance", "valor": true},
+    "accion": "Con ingreso variable necesitas al menos 6 meses de fondo de emergencia (idealmente 12).",
+    "factor_certeza": 88,
+    "prioridad": 8,
+    "explicacion": "Los trabajadores independientes o freelance enfrentan meses sin ingresos. La recomendación es un fondo de 6-12 meses de gastos para cubrir períodos de baja actividad."
+  }
+]

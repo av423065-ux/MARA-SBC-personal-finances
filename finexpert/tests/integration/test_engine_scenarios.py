@@ -47,17 +47,18 @@ class TestPerfilCritico:
         assert "recomendaciones" in d
         assert isinstance(d["recomendaciones"], list)
 
-    def test_r01_disparada(self, engine, perfil_critico):
-        """La regla R01 (ratio_gasto_fijo > 0.70) debe dispararse."""
+    def test_d03_disparada(self, engine, perfil_critico):
+        """D03 (ratio_gasto_fijo 0.70-0.80 → critica) debe dispararse para perfil_critico.
+        Perfil_critico: ratio_gasto_fijo = 9500/12000 = 0.792, rango D03."""
         diag = engine.diagnose(perfil_critico)
         ids_disparadas = {e["regla_id"] for e in diag.cadena_inferencia}
-        assert "R01" in ids_disparadas
+        assert "D03" in ids_disparadas
 
-    def test_tarjeta_credito_minimo_detectado(self, engine, perfil_critico):
-        """D07 debe dispararse: tiene tarjeta y paga solo el mínimo."""
+    def test_pago_minimo_tarjeta_detectado(self, engine, perfil_critico):
+        """D11 debe dispararse: paga solo el mínimo de tarjeta."""
         diag = engine.diagnose(perfil_critico)
         ids = {e["regla_id"] for e in diag.cadena_inferencia}
-        assert "D07" in ids
+        assert "D11" in ids
 
 
 # ================================================================

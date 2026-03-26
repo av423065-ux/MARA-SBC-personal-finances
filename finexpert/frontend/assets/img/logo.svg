@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Línea de tendencia ascendente -->
+  <polyline
+    points="6,38 18,26 30,32 42,12"
+    stroke="#2563eb"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <!-- Punto final (destacado) -->
+  <circle cx="42" cy="12" r="3.5" fill="#2563eb"/>
+</svg>

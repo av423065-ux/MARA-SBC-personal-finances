@@ -1,0 +1,142 @@
+[
+  {
+    "id": "IN01",
+    "dominio": "inversion",
+    "descripcion": "Capital alto con perfil agresivo: acciones y ETFs",
+    "condiciones": [
+      {"variable": "capital_disponible", "operador": ">",  "valor": 50000},
+      {"variable": "perfil_riesgo",      "operador": "==", "valor": "agresivo"}
+    ],
+    "conclusion": {"variable": "instrumento", "valor": "acciones_etf"},
+    "accion": "Considera invertir en ETFs globales (S&P500, MSCI World) o acciones individuales. Diversifica al menos en 5 sectores.",
+    "factor_certeza": 82,
+    "prioridad": 7,
+    "explicacion": "Con capital suficiente y perfil agresivo, los ETFs ofrecen diversificación automática con potencial de rendimiento del 8-12% anual real en horizontes de 10+ años."
+  },
+  {
+    "id": "IN02",
+    "dominio": "inversion",
+    "descripcion": "Capital medio con perfil moderado: fondos mixtos",
+    "condiciones": [
+      {"variable": "capital_disponible", "operador": ">",  "valor": 10000},
+      {"variable": "perfil_riesgo",      "operador": "==", "valor": "moderado"}
+    ],
+    "conclusion": {"variable": "instrumento", "valor": "fondos_mixtos"},
+    "accion": "Los fondos de inversión mixtos (renta fija + variable) son ideales para tu perfil. Busca uno con al menos 5 años de historial.",
+    "factor_certeza": 78,
+    "prioridad": 7,
+    "explicacion": "Un fondo mixto 60/40 (renta fija / variable) históricamente ofrece rendimientos de 6-9% anual con menor volatilidad que la renta variable pura."
+  },
+  {
+    "id": "IN03",
+    "dominio": "inversion",
+    "descripcion": "Cualquier capital con perfil conservador: CETES",
+    "condiciones": [
+      {"variable": "capital_disponible", "operador": ">",  "valor": 100},
+      {"variable": "perfil_riesgo",      "operador": "==", "valor": "conservador"}
+    ],
+    "conclusion": {"variable": "instrumento", "valor": "cetes"},
+    "accion": "Invierte en CETES Directo (cetesdirecto.com.mx). Desde $100 pesos, sin comisiones y con rendimientos del ~10% anual actualmente.",
+    "factor_certeza": 85,
+    "prioridad": 7,
+    "explicacion": "Los CETES son instrumentos de deuda gubernamental con respaldo del Gobierno Federal. Son la inversión más segura del mercado mexicano y están disponibles desde $100."
+  },
+  {
+    "id": "IN04",
+    "dominio": "inversion",
+    "descripcion": "Perfil muy conservador: instrumentos de máxima seguridad",
+    "condiciones": [
+      {"variable": "capital_disponible", "operador": ">",  "valor": 100},
+      {"variable": "perfil_riesgo",      "operador": "==", "valor": "muy_conservador"}
+    ],
+    "conclusion": {"variable": "instrumento", "valor": "pagare_bancario"},
+    "accion": "Pagarés bancarios a plazo fijo, fondos de mercado de dinero o CETES a corto plazo son ideales para preservar tu capital.",
+    "factor_certeza": 80,
+    "prioridad": 7,
+    "explicacion": "A perfil muy conservador la prioridad es liquidez y preservación. Los pagarés bancarios garantizan capital y ofrecen tasas ligeramente superiores a cuentas de ahorro."
+  },
+  {
+    "id": "IN05",
+    "dominio": "inversion",
+    "descripcion": "Capital significativo sin diversificación",
+    "condiciones": [
+      {"variable": "capital_disponible", "operador": ">=", "valor": 10000},
+      {"variable": "num_instrumentos",   "operador": "<",  "valor": 2}
+    ],
+    "conclusion": {"variable": "recomendacion_diversificar_portafolio", "valor": true},
+    "accion": "No pongas todos los huevos en una sola canasta. Diversifica al menos en 2-3 instrumentos de diferente tipo y plazo.",
+    "factor_certeza": 85,
+    "prioridad": 7,
+    "explicacion": "La diversificación reduce el riesgo específico de un instrumento. Con $10,000+ es viable distribuir entre CETES corto, CETES largo y un fondo de inversión."
+  },
+  {
+    "id": "IN06",
+    "dominio": "inversion",
+    "descripcion": "Sin inversión activa con capital disponible: iniciar cartera",
+    "condiciones": [
+      {"variable": "num_instrumentos",   "operador": "==", "valor": 0},
+      {"variable": "capital_disponible", "operador": ">",  "valor": 1000}
+    ],
+    "conclusion": {"variable": "recomendacion_iniciar_inversion", "valor": true},
+    "accion": "Tienes capital disponible sin invertir. Empieza hoy: el costo de oportunidad de no invertir es real (inflación erosiona el poder adquisitivo).",
+    "factor_certeza": 88,
+    "prioridad": 8,
+    "explicacion": "El dinero en cuenta de ahorro rinde menos que la inflación en México (~3% objetivo vs 4-6% real). No invertir implica perder poder adquisitivo cada año."
+  },
+  {
+    "id": "IN07",
+    "dominio": "inversion",
+    "descripcion": "Capital insuficiente: aumentar antes de invertir",
+    "condiciones": [
+      {"variable": "capital_disponible", "operador": "<=", "valor": 1000},
+      {"variable": "nivel_fondo_emergencia", "operador": "!=", "valor": "optimo"}
+    ],
+    "conclusion": {"variable": "recomendacion_aumentar_capital_primero", "valor": true},
+    "accion": "Antes de invertir, consolida tu fondo de emergencia. Primero crea el colchón, luego multiplica el dinero.",
+    "factor_certeza": 82,
+    "prioridad": 7,
+    "explicacion": "Invertir sin fondo de emergencia es contraproducente: cualquier imprevisto te obliga a rescatar la inversión, perdiendo tiempo de capitalización y posiblemente con pérdidas."
+  },
+  {
+    "id": "IN08",
+    "dominio": "inversion",
+    "descripcion": "Rendimiento esperado por encima de inflación: evaluar riesgo real",
+    "condiciones": [
+      {"variable": "tasa_rendimiento_esperada", "operador": ">",  "valor": 0.04},
+      {"variable": "perfil_riesgo",             "operador": "!=", "valor": "agresivo"}
+    ],
+    "conclusion": {"variable": "alerta_expectativa_rendimiento", "valor": true},
+    "accion": "Tu expectativa de rendimiento es alta para tu perfil de riesgo. Verifica que los instrumentos que consideras no impliquen riesgo mayor al que toleras.",
+    "factor_certeza": 72,
+    "prioridad": 6,
+    "explicacion": "A mayor rendimiento esperado, mayor riesgo implícito. Con perfil conservador o moderado, rendimientos esperados del 15%+ generalmente implican riesgo incompatible."
+  },
+  {
+    "id": "IN09",
+    "dominio": "inversion",
+    "descripcion": "ISR no considerado en inversión: recordatorio fiscal",
+    "condiciones": [
+      {"variable": "paga_ISR",          "operador": "==", "valor": false},
+      {"variable": "capital_disponible","operador": ">",  "valor": 10000}
+    ],
+    "conclusion": {"variable": "recomendacion_considerar_ISR", "valor": true},
+    "accion": "Los rendimientos de inversión en México pagan ISR (actualmente ~0.15% sobre el capital en CETES). Considera esto en tu rendimiento neto esperado.",
+    "factor_certeza": 68,
+    "prioridad": 5,
+    "explicacion": "La retención de ISR sobre intereses se aplica automáticamente en CETES Directo y fondos regulados. Aunque es baja, debe considerarse en el cálculo del rendimiento real neto."
+  },
+  {
+    "id": "IN10",
+    "dominio": "inversion",
+    "descripcion": "Situación óptima de ahorro: lista para cartera de inversión activa",
+    "condiciones": [
+      {"variable": "nivel_fondo_emergencia", "operador": "==", "valor": "optimo"},
+      {"variable": "nivel_ahorro",           "operador": "==", "valor": "optimo"}
+    ],
+    "conclusion": {"variable": "listo_para_cartera_inversion", "valor": true},
+    "accion": "Con fondo de emergencia sólido y ahorro óptimo, estás en el punto ideal para construir una cartera de inversión diversificada y a largo plazo.",
+    "factor_certeza": 90,
+    "prioridad": 7,
+    "explicacion": "Tener las bases financieras cubiertas (fondo + ahorro) libera capital para invertir sin presión, permitiendo decisiones racionales en lugar de reactivas."
+  }
+]

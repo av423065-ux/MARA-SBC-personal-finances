@@ -1,5 +1,5 @@
 """
-Utilidades financieras de FinExpert.
+Utilidades financieras de MARA.
 Todos los cálculos son funciones puras sin efectos secundarios.
 """
 from __future__ import annotations

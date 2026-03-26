@@ -1,5 +1,5 @@
 """
-Fixtures compartidas para las pruebas de FinExpert.
+Fixtures compartidas para las pruebas de MARA.
 Define los tres perfiles canónicos: crítico, en_riesgo y saludable.
 """
 import sys, pathlib

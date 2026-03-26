@@ -1,5 +1,5 @@
 """
-Pruebas unitarias del motor de inferencia de FinExpert.
+Pruebas unitarias del motor de inferencia de MARA.
 Cubre: WorkingMemory, ConflictResolver, Agenda, Explainer,
        KnowledgeBase (carga y validación) y calculators.
 """
@@ -226,7 +226,7 @@ class TestKnowledgeBase:
         assert stats["pronostico"] == 10
 
     def test_by_id_found(self, kb):
-        rule = kb.by_id("R01")
+        rule = kb.by_id("D01")
         assert rule is not None
         assert rule.dominio == "diagnostico"
 

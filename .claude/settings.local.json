@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(python -m pytest tests/unit/test_working_memory.py tests/unit/test_conflict_resolver.py tests/unit/test_agenda.py -v)",
+      "Bash(python -m pytest tests/unit/test_rules_diagnostico.py tests/unit/test_rules_deuda.py tests/unit/test_rules_ahorro.py -v)",
+      "Bash(python -m pytest tests/unit/ tests/integration/ -v --tb=short)",
+      "Bash(python -m pytest tests/ -v)",
+      "Bash(python -c \"import docx; print\\(''ok''\\)\")",
+      "Bash(python update_docx.py)",
+      "Bash(python -c \":*)",
+      "Bash(del:*)",
+      "Bash(rm backend/engine/__init__.py backend/models/diagnosis.py frontend/pages/step1_perfil.html frontend/pages/step2_finanzas.html frontend/pages/step3_metas.html frontend/pages/step4_dashboard.html)",
+      "Bash(rmdir frontend/pages/)"
+    ]
+  }
+}

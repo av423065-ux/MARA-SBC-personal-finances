@@ -1,0 +1,211 @@
+[
+  {
+    "id": "DP01",
+    "dominio": "deuda",
+    "descripcion": "DAI crítico: deuda consume más del 50% del ingreso",
+    "condiciones": [
+      {"variable": "DAI", "operador": ">", "valor": 0.50}
+    ],
+    "conclusion": {"variable": "nivel_endeudamiento", "valor": "critico"},
+    "accion": "Consulta una reestructura de deuda con tu banco o busca un defensor del deudor en CONDUSEF.",
+    "factor_certeza": 95,
+    "prioridad": 9,
+    "explicacion": "Tu DAI supera el 50%. La CONDUSEF establece que por encima del 30% el riesgo de sobreendeudamiento es alto; al 50% el riesgo de insolvencia es inminente."
+  },
+  {
+    "id": "DP02",
+    "dominio": "deuda",
+    "descripcion": "DAI alto: entre 35% y 50%",
+    "condiciones": [
+      {"variable": "DAI", "operador": ">",  "valor": 0.35},
+      {"variable": "DAI", "operador": "<=", "valor": 0.50},
+      {"variable": "nivel_endeudamiento", "operador": "!=", "valor": "critico"}
+    ],
+    "conclusion": {"variable": "nivel_endeudamiento", "valor": "alto"},
+    "accion": "Frena la adquisición de nuevas deudas y enfoca pagos en los créditos con mayor tasa.",
+    "factor_certeza": 88,
+    "prioridad": 8,
+    "explicacion": "Tu DAI está entre 35% y 50%, lo que reduce significativamente tu capacidad de ahorro y te hace vulnerable ante cualquier reducción de ingresos."
+  },
+  {
+    "id": "DP03",
+    "dominio": "deuda",
+    "descripcion": "DAI moderado: entre 20% y 35%",
+    "condiciones": [
+      {"variable": "DAI", "operador": ">",  "valor": 0.20},
+      {"variable": "DAI", "operador": "<=", "valor": 0.35},
+      {"variable": "nivel_endeudamiento", "operador": "!=", "valor": "critico"},
+      {"variable": "nivel_endeudamiento", "operador": "!=", "valor": "alto"}
+    ],
+    "conclusion": {"variable": "nivel_endeudamiento", "valor": "moderado"},
+    "accion": "Tu deuda es manejable pero está por encima del óptimo. Planifica liquidarla en el mediano plazo.",
+    "factor_certeza": 78,
+    "prioridad": 7,
+    "explicacion": "Con un DAI entre 20% y 35% tienes deuda pero aún es controlable. Prioriza liquidar los créditos más caros primero."
+  },
+  {
+    "id": "DP04",
+    "dominio": "deuda",
+    "descripcion": "DAI saludable: 20% o menos",
+    "condiciones": [
+      {"variable": "DAI", "operador": "<=", "valor": 0.20},
+      {"variable": "nivel_endeudamiento", "operador": "!=", "valor": "critico"},
+      {"variable": "nivel_endeudamiento", "operador": "!=", "valor": "alto"},
+      {"variable": "nivel_endeudamiento", "operador": "!=", "valor": "moderado"}
+    ],
+    "conclusion": {"variable": "nivel_endeudamiento", "valor": "saludable"},
+    "accion": "Tu nivel de deuda es saludable. Mantén este comportamiento y evita asumir nuevos créditos innecesarios.",
+    "factor_certeza": 85,
+    "prioridad": 6,
+    "explicacion": "Tu DAI de 20% o menos es el nivel recomendado. Tienes margen para absorber imprevistos sin comprometer tu estabilidad financiera."
+  },
+  {
+    "id": "DP05",
+    "dominio": "deuda",
+    "descripcion": "Tasa de interés usuraria: refinanciar urgente",
+    "condiciones": [
+      {"variable": "tasa_promedio_anual", "operador": ">", "valor": 0.36}
+    ],
+    "conclusion": {"variable": "recomendacion_renegociar_tasa", "valor": true},
+    "accion": "Negocia con tu banco o transfiere la deuda a una institución con menor tasa. Considera CONDUSEF como mediador.",
+    "factor_certeza": 90,
+    "prioridad": 8,
+    "explicacion": "Una tasa anual superior al 36% es considerada abusiva. Con esa tasa, una deuda de $50,000 genera $18,000 en intereses cada año."
+  },
+  {
+    "id": "DP06",
+    "dominio": "deuda",
+    "descripcion": "Pago mínimo de tarjeta: espiral de deuda",
+    "condiciones": [
+      {"variable": "paga_minimo_tarjeta", "operador": "==", "valor": true}
+    ],
+    "conclusion": {"variable": "recomendacion_pagar_mas_minimo", "valor": true},
+    "accion": "Paga al menos el doble del mínimo en tu tarjeta. El mínimo solo cubre intereses y nunca liquida el capital.",
+    "factor_certeza": 93,
+    "prioridad": 9,
+    "explicacion": "Al pagar solo el mínimo, aproximadamente el 80% del pago va a intereses y solo el 20% al capital. La deuda puede tardar décadas en liquidarse."
+  },
+  {
+    "id": "DP07",
+    "dominio": "deuda",
+    "descripcion": "Múltiples créditos: consolidar para reducir costo",
+    "condiciones": [
+      {"variable": "num_creditos", "operador": ">", "valor": 3}
+    ],
+    "conclusion": {"variable": "recomendacion_consolidar_deudas", "valor": true},
+    "accion": "Consolida tus deudas en un solo crédito con menor tasa total para simplificar y reducir el costo.",
+    "factor_certeza": 75,
+    "prioridad": 7,
+    "explicacion": "Manejar más de 3 créditos simultáneos aumenta el riesgo de olvidos de pago, comisiones por apertura y el costo total de la deuda."
+  },
+  {
+    "id": "DP08",
+    "dominio": "deuda",
+    "descripcion": "Deuda + ingreso crítico: estrategia avalancha obligatoria",
+    "condiciones": [
+      {"variable": "nivel_endeudamiento", "operador": "==", "valor": "critico"},
+      {"variable": "paga_minimo_tarjeta", "operador": "==", "valor": true}
+    ],
+    "conclusion": {"variable": "accion_urgente_deuda", "valor": "avalancha_inmediata"},
+    "accion": "Aplica la estrategia avalancha: destina todo recurso extra al crédito con mayor tasa. No hagas gastos discrecionales hasta controlar la deuda.",
+    "factor_certeza": 92,
+    "prioridad": 10,
+    "explicacion": "Con deuda crítica y pagando solo mínimos, cada mes la situación empeora exponencialmente. La estrategia avalancha (pagar primero el crédito más caro) minimiza el costo total."
+  },
+  {
+    "id": "DP09",
+    "dominio": "deuda",
+    "descripcion": "Estrategia avalancha para deuda alta",
+    "condiciones": [
+      {"variable": "nivel_endeudamiento", "operador": "==", "valor": "alto"},
+      {"variable": "num_creditos",        "operador": ">",  "valor": 1}
+    ],
+    "conclusion": {"variable": "estrategia_deuda", "valor": "avalancha"},
+    "accion": "Ordena tus deudas de mayor a menor tasa. Paga mínimos en todas y dirige el excedente a la de mayor tasa.",
+    "factor_certeza": 82,
+    "prioridad": 7,
+    "explicacion": "La estrategia avalancha es matemáticamente óptima: reduce el costo total de la deuda al eliminar primero los intereses más altos."
+  },
+  {
+    "id": "DP10",
+    "dominio": "deuda",
+    "descripcion": "Estrategia snowball para deuda moderada",
+    "condiciones": [
+      {"variable": "nivel_endeudamiento", "operador": "==", "valor": "moderado"}
+    ],
+    "conclusion": {"variable": "estrategia_deuda", "valor": "snowball"},
+    "accion": "Ordena tus deudas de menor a mayor saldo. Paga la más pequeña primero para liberar flujo rápido.",
+    "factor_certeza": 72,
+    "prioridad": 6,
+    "explicacion": "La estrategia snowball (menor saldo primero) puede no ser la más eficiente en intereses, pero genera victorias rápidas que refuerzan la motivación."
+  },
+  {
+    "id": "DP11",
+    "dominio": "deuda",
+    "descripcion": "Riesgo por tasa variable en entorno de alza",
+    "condiciones": [
+      {"variable": "tiene_deuda_tasa_variable", "operador": "==", "valor": true},
+      {"variable": "tendencia_tasas",           "operador": "==", "valor": "alza"}
+    ],
+    "conclusion": {"variable": "alerta_tasa_variable_riesgo", "valor": true},
+    "accion": "Refinancia tu deuda a tasa fija antes de que suban más las tasas de referencia de Banxico.",
+    "factor_certeza": 85,
+    "prioridad": 8,
+    "explicacion": "Las deudas a tasa variable se encarecen cuando Banxico sube la tasa de referencia. Con tendencia alcista, refinanciar a tasa fija protege tu presupuesto."
+  },
+  {
+    "id": "DP12",
+    "dominio": "deuda",
+    "descripcion": "Hipoteca con DAI controlado: situación aceptable",
+    "condiciones": [
+      {"variable": "tiene_hipoteca", "operador": "==", "valor": true},
+      {"variable": "DAI",           "operador": "<=", "valor": 0.35}
+    ],
+    "conclusion": {"variable": "hipoteca_manejable", "valor": true},
+    "accion": "Tu hipoteca está dentro de un DAI manejable. Considera hacer abonos a capital para reducir el plazo.",
+    "factor_certeza": 70,
+    "prioridad": 5,
+    "explicacion": "Una hipoteca con DAI ≤ 35% es generalmente manejable. Hacer abonos adicionales a capital puede reducir años de pago y miles en intereses."
+  },
+  {
+    "id": "DP13",
+    "dominio": "deuda",
+    "descripcion": "Crédito nómina: riesgo de encadenamiento laboral",
+    "condiciones": [
+      {"variable": "tiene_credito_nomina", "operador": "==", "valor": true}
+    ],
+    "conclusion": {"variable": "alerta_credito_nomina", "valor": true},
+    "accion": "El crédito nómina cobra directamente de tu sueldo. Evalúa si el costo es menor a otras alternativas.",
+    "factor_certeza": 65,
+    "prioridad": 5,
+    "explicacion": "Los créditos nómina tienen la ventaja de tasas controladas pero el descuento automático reduce tu liquidez mensual sin posibilidad de negociación temporal."
+  },
+  {
+    "id": "DP14",
+    "dominio": "deuda",
+    "descripcion": "Deuda con ahorro cero: priorizar por tipo",
+    "condiciones": [
+      {"variable": "DAI",              "operador": ">",  "valor": 0.20},
+      {"variable": "ahorro_automatico","operador": "==", "valor": false}
+    ],
+    "conclusion": {"variable": "recomendacion_ahorro_minimo_antes_deuda", "valor": true},
+    "accion": "Establece al menos un 5% de ahorro automático antes de destinar extra al pago de deuda.",
+    "factor_certeza": 70,
+    "prioridad": 6,
+    "explicacion": "Liquidar deuda sin un colchón de ahorro mínimo expone a volver a endeudarse ante el primer imprevisto. Un 5% de reserva rompe ese ciclo."
+  },
+  {
+    "id": "DP15",
+    "dominio": "deuda",
+    "descripcion": "Pago extra de deuda: acelerar liquidación",
+    "condiciones": [
+      {"variable": "pago_extra_deuda", "operador": ">", "valor": 0},
+      {"variable": "nivel_endeudamiento", "operador": "!=", "valor": "saludable"}
+    ],
+    "conclusion": {"variable": "impacto_pago_extra", "valor": "positivo"},
+    "accion": "Cada peso extra que destines a liquidar deuda reduce el total de intereses pagados. Mantén esta práctica.",
+    "factor_certeza": 88,
+    "prioridad": 7,
+    "explicacion": "Hacer pagos extras reduce el saldo de capital, sobre el que se calculan los intereses. El efecto compuesto de pagos extras puede reducir el plazo a la mitad."
+  }
+]

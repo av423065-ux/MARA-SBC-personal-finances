@@ -1,0 +1,214 @@
+[
+  {
+    "id": "AH01",
+    "dominio": "ahorro",
+    "descripcion": "Fondo de emergencia inexistente o insuficiente (< 3 meses)",
+    "condiciones": [
+      {"variable": "meses_fondo_emergencia", "operador": "<", "valor": 3}
+    ],
+    "conclusion": {"variable": "nivel_fondo_emergencia", "valor": "insuficiente"},
+    "accion": "Constituye tu fondo de emergencia como primera prioridad antes de cualquier otra meta de ahorro.",
+    "factor_certeza": 92,
+    "prioridad": 9,
+    "explicacion": "Un fondo de emergencia menor a 3 meses de gastos te deja sin red de seguridad ante pérdida de empleo, enfermedad o gastos imprevistos."
+  },
+  {
+    "id": "AH02",
+    "dominio": "ahorro",
+    "descripcion": "Fondo de emergencia aceptable (3 a 6 meses)",
+    "condiciones": [
+      {"variable": "meses_fondo_emergencia", "operador": ">=", "valor": 3},
+      {"variable": "meses_fondo_emergencia", "operador": "<",  "valor": 6},
+      {"variable": "nivel_fondo_emergencia", "operador": "!=", "valor": "insuficiente"}
+    ],
+    "conclusion": {"variable": "nivel_fondo_emergencia", "valor": "aceptable"},
+    "accion": "Tienes un fondo básico. Trabaja para llegar a 6 meses de gastos cubiertos.",
+    "factor_certeza": 78,
+    "prioridad": 8,
+    "explicacion": "Un fondo de 3-6 meses es el rango mínimo recomendado. Con 6 meses tienes mayor estabilidad y tiempo para recuperarte de una crisis laboral."
+  },
+  {
+    "id": "AH03",
+    "dominio": "ahorro",
+    "descripcion": "Fondo de emergencia óptimo (6 meses o más)",
+    "condiciones": [
+      {"variable": "meses_fondo_emergencia", "operador": ">=", "valor": 6},
+      {"variable": "nivel_fondo_emergencia", "operador": "!=", "valor": "insuficiente"},
+      {"variable": "nivel_fondo_emergencia", "operador": "!=", "valor": "aceptable"}
+    ],
+    "conclusion": {"variable": "nivel_fondo_emergencia", "valor": "optimo"},
+    "accion": "¡Excelente fondo de emergencia! Con este respaldo puedes enfocarte en metas de inversión a largo plazo.",
+    "factor_certeza": 88,
+    "prioridad": 7,
+    "explicacion": "Un fondo de emergencia de 6 o más meses es el estándar óptimo recomendado internacionalmente para trabajadores en relación de dependencia."
+  },
+  {
+    "id": "AH04",
+    "dominio": "ahorro",
+    "descripcion": "Tasa de ahorro crítica: menor al 10%",
+    "condiciones": [
+      {"variable": "ratio_ahorro", "operador": "<",  "valor": 0.10},
+      {"variable": "ratio_ahorro", "operador": ">=", "valor": 0}
+    ],
+    "conclusion": {"variable": "nivel_ahorro", "valor": "bajo"},
+    "accion": "Revisa tus gastos variables y establece un plan para ahorrar al menos el 10% de tu ingreso mensual.",
+    "factor_certeza": 88,
+    "prioridad": 8,
+    "explicacion": "Con una tasa de ahorro menor al 10% no puedes acumular patrimonio ni cubrir metas financieras de mediano plazo. Es el umbral mínimo de seguridad financiera."
+  },
+  {
+    "id": "AH05",
+    "dominio": "ahorro",
+    "descripcion": "Tasa de ahorro moderada: entre 10% y 20%",
+    "condiciones": [
+      {"variable": "ratio_ahorro", "operador": ">=", "valor": 0.10},
+      {"variable": "ratio_ahorro", "operador": "<",  "valor": 0.20},
+      {"variable": "nivel_ahorro", "operador": "!=", "valor": "bajo"}
+    ],
+    "conclusion": {"variable": "nivel_ahorro", "valor": "moderado"},
+    "accion": "Vas bien. Incrementa gradualmente tu ahorro hasta el 20% para estar en zona óptima.",
+    "factor_certeza": 75,
+    "prioridad": 7,
+    "explicacion": "Ahorrar entre 10% y 20% del ingreso es un punto de partida sólido. Con el 20% cumples la regla 50/30/20 y construyes patrimonio de forma consistente."
+  },
+  {
+    "id": "AH06",
+    "dominio": "ahorro",
+    "descripcion": "Tasa de ahorro óptima: 20% o más",
+    "condiciones": [
+      {"variable": "ratio_ahorro", "operador": ">=", "valor": 0.20},
+      {"variable": "nivel_ahorro", "operador": "!=", "valor": "bajo"},
+      {"variable": "nivel_ahorro", "operador": "!=", "valor": "moderado"}
+    ],
+    "conclusion": {"variable": "nivel_ahorro", "valor": "optimo"},
+    "accion": "Estás ahorrando el 20% o más. Considera diversificar en instrumentos que protejan tu ahorro de la inflación.",
+    "factor_certeza": 90,
+    "prioridad": 6,
+    "explicacion": "Ahorrar el 20% o más del ingreso te coloca en el estándar de la regla 50/30/20. A este ritmo puedes alcanzar metas de largo plazo y construir patrimonio real."
+  },
+  {
+    "id": "AH07",
+    "dominio": "ahorro",
+    "descripcion": "Fondo insuficiente con ingreso variable: urgencia crítica",
+    "condiciones": [
+      {"variable": "nivel_fondo_emergencia", "operador": "==", "valor": "insuficiente"},
+      {"variable": "tipo_ingreso",           "operador": "==", "valor": "variable"}
+    ],
+    "conclusion": {"variable": "urgencia_fondo_emergencia", "valor": "critica"},
+    "accion": "Con ingresos variables y sin fondo de emergencia, un mes sin clientes puede desestabilizarte totalmente. Prioriza el fondo al 100%.",
+    "factor_certeza": 95,
+    "prioridad": 10,
+    "explicacion": "Los trabajadores independientes pueden pasar semanas o meses sin ingresos. Sin fondo de emergencia, cualquier seco en el flujo lleva al endeudamiento urgente."
+  },
+  {
+    "id": "AH08",
+    "dominio": "ahorro",
+    "descripcion": "Fondo insuficiente con ingreso fijo: urgencia alta",
+    "condiciones": [
+      {"variable": "nivel_fondo_emergencia", "operador": "==", "valor": "insuficiente"},
+      {"variable": "tipo_ingreso",           "operador": "==", "valor": "fijo"},
+      {"variable": "urgencia_fondo_emergencia", "operador": "!=", "valor": "critica"}
+    ],
+    "conclusion": {"variable": "urgencia_fondo_emergencia", "valor": "alta"},
+    "accion": "Aunque tienes ingreso fijo, sin fondo de emergencia un gasto médico o reparación mayor puede enviarte a deuda. Ahorra 3 meses de gastos primero.",
+    "factor_certeza": 85,
+    "prioridad": 8,
+    "explicacion": "Incluso con empleo formal, la pérdida de empleo o enfermedad es posible. El fondo de emergencia es la base de toda estructura financiera sana."
+  },
+  {
+    "id": "AH09",
+    "dominio": "ahorro",
+    "descripcion": "Sin ahorro automático con nivel bajo: establecer automatización",
+    "condiciones": [
+      {"variable": "ahorro_automatico", "operador": "==", "valor": false},
+      {"variable": "nivel_ahorro",      "operador": "==", "valor": "bajo"}
+    ],
+    "conclusion": {"variable": "recomendacion_ahorro_automatico_urgente", "valor": true},
+    "accion": "Configura una transferencia automática el día de pago hacia una cuenta de ahorro separada, aunque sea del 5%.",
+    "factor_certeza": 88,
+    "prioridad": 8,
+    "explicacion": "El ahorro voluntario tiende a fracasar porque compite con gastos inmediatos. Automatizarlo elimina la fricción y garantiza consistencia desde el primer mes."
+  },
+  {
+    "id": "AH10",
+    "dominio": "ahorro",
+    "descripcion": "Ahorro moderado sin automatizar: oportunidad de mejora",
+    "condiciones": [
+      {"variable": "ahorro_automatico", "operador": "==", "valor": false},
+      {"variable": "nivel_ahorro",      "operador": "==", "valor": "moderado"}
+    ],
+    "conclusion": {"variable": "recomendacion_automatizar_ahorro", "valor": true},
+    "accion": "Ya ahorras, pero automatizarlo te protegerá de meses de tentaciones o gastos imprevistos que reduzcan tu ahorro.",
+    "factor_certeza": 78,
+    "prioridad": 7,
+    "explicacion": "Automatizar el ahorro cuando ya existe el hábito lo fortalece y lo protege de variaciones emocionales o de gasto mensual."
+  },
+  {
+    "id": "AH11",
+    "dominio": "ahorro",
+    "descripcion": "No registra gastos: punto ciego financiero",
+    "condiciones": [
+      {"variable": "lleva_registro_gastos", "operador": "==", "valor": false}
+    ],
+    "conclusion": {"variable": "recomendacion_iniciar_registro_gastos", "valor": true},
+    "accion": "Empieza a registrar tus gastos durante 30 días. Solo conociendo en qué gastas puedes decidir en qué ahorrar.",
+    "factor_certeza": 82,
+    "prioridad": 7,
+    "explicacion": "Sin registro de gastos, entre el 20% y 30% del ingreso se gasta sin conciencia ('gastos hormiga'). El registro revela oportunidades de ahorro inmediatas."
+  },
+  {
+    "id": "AH12",
+    "dominio": "ahorro",
+    "descripcion": "Tendencia de gasto creciente con ahorro bajo: alerta",
+    "condiciones": [
+      {"variable": "tendencia_gasto", "operador": "==", "valor": "creciente"},
+      {"variable": "ratio_ahorro",    "operador": "<",  "valor": 0.15}
+    ],
+    "conclusion": {"variable": "alerta_tendencia_gasto_creciente", "valor": true},
+    "accion": "Tus gastos están aumentando mes a mes mientras tu ahorro ya es bajo. Identifica y controla los gastos que crecen.",
+    "factor_certeza": 88,
+    "prioridad": 8,
+    "explicacion": "Una tendencia de gasto creciente con ahorro bajo crea una trayectoria de deterioro: en pocos meses el ahorro puede llegar a cero o generar déficit."
+  },
+  {
+    "id": "AH13",
+    "dominio": "ahorro",
+    "descripcion": "Mes de gasto alto: revisar variables",
+    "condiciones": [
+      {"variable": "mes_alto_gasto", "operador": "==", "valor": true}
+    ],
+    "conclusion": {"variable": "recomendacion_revisar_gastos_variables", "valor": true},
+    "accion": "Este mes tienes gastos extraordinarios. Identifica cuáles son recurrentes y ajusta el presupuesto.",
+    "factor_certeza": 72,
+    "prioridad": 6,
+    "explicacion": "Los meses con gastos extraordinarios (aguinaldo, vacaciones, regreso a clases) son oportunidades para ajustar el presupuesto y evitar que se vuelvan hábito."
+  },
+  {
+    "id": "AH14",
+    "dominio": "ahorro",
+    "descripcion": "Regla 50/30/20 incumplida: recomendación de redistribución",
+    "condiciones": [
+      {"variable": "ratio_ahorro",     "operador": "<",  "valor": 0.20},
+      {"variable": "nivel_endeudamiento", "operador": "!=", "valor": "critico"}
+    ],
+    "conclusion": {"variable": "recomendacion_aplicar_50_30_20", "valor": true},
+    "accion": "Aplica la regla 50/30/20: 50% necesidades, 30% deseos, 20% ahorro/deuda. Ajusta categorías por categoría.",
+    "factor_certeza": 80,
+    "prioridad": 6,
+    "explicacion": "La regla 50/30/20 es un marco simple y probado para distribuir el ingreso. Aunque no es perfecta para todos los contextos, provee un punto de partida concreto."
+  },
+  {
+    "id": "AH15",
+    "dominio": "ahorro",
+    "descripcion": "Situación de ahorro excelente: fondo y tasa óptimos",
+    "condiciones": [
+      {"variable": "nivel_fondo_emergencia", "operador": "==", "valor": "optimo"},
+      {"variable": "nivel_ahorro",           "operador": "==", "valor": "optimo"}
+    ],
+    "conclusion": {"variable": "situacion_ahorro", "valor": "excelente"},
+    "accion": "Tu ahorro es excelente. Es el momento de diversificar en instrumentos de inversión para que tu dinero trabaje por ti.",
+    "factor_certeza": 92,
+    "prioridad": 5,
+    "explicacion": "Tener fondo óptimo (6+ meses) y tasa de ahorro del 20%+ es la base ideal para iniciar o ampliar una estrategia de inversión formal."
+  }
+]

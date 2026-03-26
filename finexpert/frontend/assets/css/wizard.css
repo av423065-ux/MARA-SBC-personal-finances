@@ -1,0 +1,122 @@
+/* Estilos del wizard de pasos de MARA */
+
+/* Barra de progreso */
+.wizard-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 1;
+  position: relative;
+}
+
+.step-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: calc(50% + 18px);
+  right: calc(-50% + 18px);
+  height: 2px;
+  background: var(--color-border);
+  z-index: 0;
+}
+
+.step-item.completed:not(:last-child)::after {
+  background: var(--color-primary);
+}
+
+.step-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #fff;
+  color: var(--color-muted);
+  z-index: 1;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.step-item.active .step-circle {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.step-item.completed .step-circle {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.step-item.completed .step-circle::before {
+  content: '✓';
+}
+
+.step-label {
+  font-size: 0.7rem;
+  color: var(--color-muted);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.step-item.active .step-label,
+.step-item.completed .step-label {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* Paneles de pasos — ocultar/mostrar */
+.wizard-step { display: none; }
+.wizard-step.active { display: block; }
+
+/* Título de sección del paso */
+.step-header {
+  margin-bottom: 1.5rem;
+}
+
+.step-header h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.step-header p {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  margin-top: 0.25rem;
+}
+
+/* Separador de sección dentro del paso */
+.section-divider {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.4rem;
+  margin: 1.5rem 0 1rem;
+}
+
+/* Indicador numérico del paso actual */
+.step-counter {
+  text-align: right;
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  margin-bottom: 0.5rem;
+}

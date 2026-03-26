@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MARA — Monitor y Asesor de Finanzas Personales y Ahorro</title>
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/wizard.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <!-- theme.js primero para evitar flash de tema incorrecto -->
+  <script src="assets/js/theme.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- Barra de controles: idioma y tema -->
+<div class="controls-bar">
+  <button class="ctrl-btn lang-btn" data-lang="es" onclick="i18n.setLang('es')">ES</button>
+  <span class="ctrl-sep">|</span>
+  <button class="ctrl-btn lang-btn" data-lang="en" onclick="i18n.setLang('en')">EN</button>
+  <div class="ctrl-divider"></div>
+  <button class="ctrl-btn" id="btnTheme" onclick="theme.toggle()" data-i18n-title="ctrl.theme_light">☾</button>
+</div>
+
+<div class="container">
+
+  <!-- Cabecera -->
+  <header class="app-header">
+    <img class="logo" src="assets/img/logo.svg" alt="MARA" />
+    <h1>MARA</h1>
+    <p data-i18n="app.subtitle">Monitor y Asesor de Finanzas Personales y Ahorro</p>
+  </header>
+
+  <!-- Barra de progreso del wizard -->
+  <nav class="wizard-progress" id="wizardProgress">
+    <div class="step-item active" data-step="1">
+      <div class="step-circle">1</div>
+      <span class="step-label" data-i18n="step.label.1">Perfil</span>
+    </div>
+    <div class="step-item" data-step="2">
+      <div class="step-circle">2</div>
+      <span class="step-label" data-i18n="step.label.2">Finanzas</span>
+    </div>
+    <div class="step-item" data-step="3">
+      <div class="step-circle">3</div>
+      <span class="step-label" data-i18n="step.label.3">Metas</span>
+    </div>
+    <div class="step-item" data-step="4">
+      <div class="step-circle">4</div>
+      <span class="step-label" data-i18n="step.label.4">Diagnóstico</span>
+    </div>
+  </nav>
+
+  <!-- Alerta de errores -->
+  <div id="errorAlert" class="alert alert-error" style="display:none;"></div>
+
+  <!-- === PASO 1: Perfil básico === -->
+  <div class="wizard-step active" id="step1">
+    <div class="step-counter" data-i18n="step.counter.1">Paso 1 de 4</div>
+    <div class="card">
+      <div class="step-header">
+        <h2 data-i18n="s1.title">Perfil personal</h2>
+        <p data-i18n="s1.subtitle">Cuéntanos un poco sobre ti para personalizar el diagnóstico.</p>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="edad" data-i18n="s1.age">Edad</label>
+          <input type="number" id="edad" name="edad" min="18" max="99" value="30"
+                 oninput="this.value=this.value.slice(0,3)" />
+        </div>
+        <div class="form-group">
+          <label for="estado_civil" data-i18n="s1.marital">Estado civil</label>
+          <select id="estado_civil" name="estado_civil">
+            <option value="soltero"    data-i18n="s1.m.single">Soltero/a</option>
+            <option value="casado"     data-i18n="s1.m.married">Casado/a</option>
+            <option value="divorciado" data-i18n="s1.m.divorced">Divorciado/a</option>
+            <option value="viudo"      data-i18n="s1.m.widowed">Viudo/a</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="num_dependientes" data-i18n="s1.dependents">Número de dependientes</label>
+          <input type="number" id="num_dependientes" min="0" max="10" value="0"
+                 oninput="if(this.value>10)this.value=10;if(this.value<0)this.value=0" />
+          <span class="hint" data-i18n="s1.dependents.hint">Personas que dependen económicamente de ti</span>
+        </div>
+        <div class="form-group">
+          <label for="nivel_educacion_financiera" data-i18n="s1.edu">Educación financiera (1-5)</label>
+          <select id="nivel_educacion_financiera">
+            <option value="1" data-i18n="s1.edu.1">1 – Básica (no conozco mucho)</option>
+            <option value="2" data-i18n="s1.edu.2">2 – Media-baja</option>
+            <option value="3" selected data-i18n="s1.edu.3">3 – Media</option>
+            <option value="4" data-i18n="s1.edu.4">4 – Media-alta</option>
+            <option value="5" data-i18n="s1.edu.5">5 – Avanzada</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="tipo_ingreso" data-i18n="s1.income_type">Tipo de ingreso</label>
+        <select id="tipo_ingreso">
+          <option value="fijo"     data-i18n="s1.i.fixed">Fijo (empleado, salario)</option>
+          <option value="variable" data-i18n="s1.i.variable">Variable (freelance, comisiones, negocio)</option>
+        </select>
+      </div>
+
+      <div class="wizard-footer">
+        <div></div>
+        <button class="btn btn-primary" onclick="wizard.next()" data-i18n="btn.next">Siguiente →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- === PASO 2: Ingresos, gastos y deudas === -->
+  <div class="wizard-step" id="step2">
+    <div class="step-counter" data-i18n="step.counter.2">Paso 2 de 4</div>
+    <div class="card">
+      <div class="step-header">
+        <h2 data-i18n="s2.title">Ingresos, gastos y deudas</h2>
+        <p data-i18n="s2.subtitle">Usa tus promedios mensuales en pesos mexicanos (MXN).</p>
+      </div>
+
+      <div class="section-divider" data-i18n="s2.sec.income">Ingresos</div>
+      <div class="form-group">
+        <label for="ingreso_mensual" data-i18n="s2.income">Ingreso mensual neto ($)</label>
+        <input type="number" id="ingreso_mensual" min="0" step="100"
+               data-i18n-ph="s2.income.ph" placeholder="Ej: 15000" />
+        <span class="hint" data-i18n="s2.income.hint">Lo que recibes después de impuestos y deducciones</span>
+      </div>
+
+      <div class="section-divider" data-i18n="s2.sec.expenses">Gastos</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="gastos_fijos" data-i18n="s2.fixed_exp">Gastos fijos mensuales ($)</label>
+          <input type="number" id="gastos_fijos" min="0" step="100"
+                 data-i18n-ph="s2.fixed_exp.ph" placeholder="Ej: 7000" />
+          <span class="hint" data-i18n="s2.fixed_exp.hint">Renta, servicios, transporte fijo</span>
+        </div>
+        <div class="form-group">
+          <label for="gastos_variables" data-i18n="s2.var_exp">Gastos variables mensuales ($)</label>
+          <input type="number" id="gastos_variables" min="0" step="100"
+                 data-i18n-ph="s2.var_exp.ph" placeholder="Ej: 3000" />
+          <span class="hint" data-i18n="s2.var_exp.hint">Alimentación, entretenimiento, ropa</span>
+        </div>
+      </div>
+
+      <div class="section-divider" data-i18n="s2.sec.debts">Deudas</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="pago_mensual_deudas" data-i18n="s2.debt_pay">Pago mensual de deudas ($)</label>
+          <input type="number" id="pago_mensual_deudas" min="0" step="100"
+                 data-i18n-ph="s2.debt_pay.ph" placeholder="Ej: 2500" value="0" />
+          <span class="hint" data-i18n="s2.debt_pay.hint">Suma de todos tus pagos mensuales de créditos</span>
+        </div>
+        <div class="form-group">
+          <label for="deuda_total" data-i18n="s2.debt_total">Deuda total acumulada ($)</label>
+          <input type="number" id="deuda_total" min="0" step="1000"
+                 data-i18n-ph="s2.debt_total.ph" placeholder="Ej: 50000" value="0" />
+        </div>
+        <div class="form-group">
+          <label for="tasa_promedio_anual" data-i18n="s2.rate">Tasa de interés promedio anual (%)</label>
+          <input type="number" id="tasa_promedio_anual" min="0" max="200" step="0.1"
+                 data-i18n-ph="s2.rate.ph" placeholder="Ej: 28" value="0" />
+          <span class="hint" data-i18n="s2.rate.hint">Ingresa el porcentaje (ej: 28 para 28%)</span>
+        </div>
+        <div class="form-group">
+          <label for="num_creditos" data-i18n="s2.credits">Número de créditos activos</label>
+          <input type="number" id="num_creditos" min="0" max="20" value="0" />
+        </div>
+      </div>
+
+      <div class="section-divider" data-i18n="s2.sec.debt_status">Situación de deuda</div>
+      <div class="form-check">
+        <input type="checkbox" id="tiene_tarjeta_credito" />
+        <label for="tiene_tarjeta_credito" data-i18n="s2.has_card">Tengo tarjeta(s) de crédito</label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" id="paga_minimo_tarjeta" />
+        <label for="paga_minimo_tarjeta" data-i18n="s2.pays_min">Solo pago el mínimo de mi(s) tarjeta(s)</label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" id="tiene_hipoteca" />
+        <label for="tiene_hipoteca" data-i18n="s2.has_mortgage">Tengo hipoteca (crédito de vivienda)</label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" id="tiene_credito_nomina" />
+        <label for="tiene_credito_nomina" data-i18n="s2.has_payroll">Tengo crédito de nómina</label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" id="tiene_deuda_tasa_variable" />
+        <label for="tiene_deuda_tasa_variable" data-i18n="s2.variable_rate">Alguna deuda tiene tasa variable</label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" id="usa_credito_para_gastos_basicos" />
+        <label for="usa_credito_para_gastos_basicos" data-i18n="s2.credit_basics">Uso crédito para pagar gastos básicos</label>
+      </div>
+
+      <div class="wizard-footer">
+        <button class="btn btn-secondary" onclick="wizard.prev()" data-i18n="btn.prev">← Anterior</button>
+        <button class="btn btn-primary"   onclick="wizard.next()" data-i18n="btn.next">Siguiente →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- === PASO 3: Ahorro, metas e inversión === -->
+  <div class="wizard-step" id="step3">
+    <div class="step-counter" data-i18n="step.counter.3">Paso 3 de 4</div>
+    <div class="card">
+      <div class="step-header">
+        <h2 data-i18n="s3.title">Ahorro, metas e inversión</h2>
+        <p data-i18n="s3.subtitle">Esta información define tu perfil de riesgo y pronóstico financiero.</p>
+      </div>
+
+      <div class="section-divider" data-i18n="s3.sec.savings">Situación de ahorro</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="meses_fondo_emergencia" data-i18n="s3.emergency">Fondo de emergencia (meses)</label>
+          <input type="number" id="meses_fondo_emergencia" min="0" max="36" step="0.5" value="0" />
+          <span class="hint" data-i18n="s3.emergency.hint">Meses de gastos cubiertos si perdieras el ingreso</span>
+        </div>
+        <div class="form-group">
+          <label for="capital_disponible" data-i18n="s3.capital">Capital disponible para invertir ($)</label>
+          <input type="number" id="capital_disponible" min="0" step="500" value="0" />
+          <span class="hint" data-i18n="s3.capital.hint">Ahorro acumulado disponible, no el fondo de emergencia</span>
+        </div>
+        <div class="form-group">
+          <label for="num_instrumentos" data-i18n="s3.instruments">Instrumentos de inversión activos</label>
+          <input type="number" id="num_instrumentos" min="0" max="20" value="0" />
+          <span class="hint" data-i18n="s3.instruments.hint">CETES, fondos, acciones, etc.</span>
+        </div>
+        <div class="form-group">
+          <label for="tasa_rendimiento_esperada" data-i18n="s3.return">Rendimiento esperado anual (%)</label>
+          <input type="number" id="tasa_rendimiento_esperada" min="0" max="100" step="0.5" value="0" />
+        </div>
+      </div>
+
+      <div class="form-check">
+        <input type="checkbox" id="ahorro_automatico" />
+        <label for="ahorro_automatico" data-i18n="s3.auto_save">Tengo ahorro automático configurado</label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" id="lleva_registro_gastos" />
+        <label for="lleva_registro_gastos" data-i18n="s3.tracks_exp">Llevo registro de mis gastos</label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" id="paga_ISR" />
+        <label for="paga_ISR" data-i18n="s3.pays_isr">Considero el ISR en mis inversiones</label>
+      </div>
+
+      <div class="section-divider" data-i18n="s3.sec.goal">Meta financiera</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="objetivo_principal" data-i18n="s3.goal_type">Objetivo principal</label>
+          <select id="objetivo_principal">
+            <option value="ahorro"     data-i18n="s3.g.savings">Crear fondo de emergencia</option>
+            <option value="deuda"      data-i18n="s3.g.debt">Liquidar deudas</option>
+            <option value="inversion"  data-i18n="s3.g.invest">Empezar a invertir</option>
+            <option value="retiro"     data-i18n="s3.g.retirement">Ahorro para el retiro</option>
+            <option value="emergencia" data-i18n="s3.g.emergency">Cubrir una emergencia actual</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="horizonte_temporal" data-i18n="s3.horizon">Horizonte temporal (meses)</label>
+          <input type="number" id="horizonte_temporal" min="1" max="600" value="12"
+                 oninput="if(this.value>600)this.value=600;if(this.value<1)this.value=1" />
+        </div>
+        <div class="form-group">
+          <label for="meta_monto" data-i18n="s3.goal_amount">Monto de la meta ($)</label>
+          <input type="number" id="meta_monto" min="0" step="1000" value="0" />
+        </div>
+        <div class="form-group">
+          <label for="meses_deficit" data-i18n="s3.deficit_months">Meses con déficit reciente</label>
+          <input type="number" id="meses_deficit" min="0" max="24" value="0" />
+          <span class="hint" data-i18n="s3.deficit_months.hint">Meses recientes en que gastaste más de lo que ganaste</span>
+        </div>
+      </div>
+
+      <div class="section-divider" data-i18n="s3.sec.trends">Tendencias y hábitos</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="tendencia_gasto" data-i18n="s3.expense_trend">Tendencia de gastos últimos 3 meses</label>
+          <select id="tendencia_gasto">
+            <option value="estable"    data-i18n="s3.t.stable_exp">Estable (sin cambios)</option>
+            <option value="creciente"  data-i18n="s3.t.rising_exp">Creciente (han aumentado)</option>
+            <option value="decreciente" data-i18n="s3.t.falling_exp">Decreciente (han bajado)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tendencia_ahorro" data-i18n="s3.savings_trend">Tendencia de ahorro últimos 3 meses</label>
+          <select id="tendencia_ahorro">
+            <option value="estable"    data-i18n="s3.t.stable">Estable</option>
+            <option value="creciente"  data-i18n="s3.t.rising">Creciente</option>
+            <option value="decreciente" data-i18n="s3.t.falling">Decreciente</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tendencia_tasas" data-i18n="s3.rates_trend">Tendencia de tasas de interés</label>
+          <select id="tendencia_tasas">
+            <option value="estable" data-i18n="s3.t.stable">Estable</option>
+            <option value="alza"    data-i18n="s3.t.up">Alza</option>
+            <option value="baja"    data-i18n="s3.t.down">Baja</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-check">
+        <input type="checkbox" id="cambio_habitos" />
+        <label for="cambio_habitos" data-i18n="s3.changing_habits">Estoy implementando cambios en mis hábitos financieros</label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" id="mes_alto_gasto" />
+        <label for="mes_alto_gasto" data-i18n="s3.high_month">Este mes tuve gastos extraordinarios</label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" id="reserva_impuestos" />
+        <label for="reserva_impuestos" data-i18n="s3.tax_reserve">Reservo dinero para impuestos (freelance/negocio)</label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" id="pago_extra_deuda_check" />
+        <label for="pago_extra_deuda_check" data-i18n="s3.extra_payment">Hago pagos extras a mis deudas</label>
+      </div>
+
+      <div class="wizard-footer">
+        <button class="btn btn-secondary" onclick="wizard.prev()" data-i18n="btn.prev">← Anterior</button>
+        <button class="btn btn-primary" id="btnDiagnosticar" onclick="wizard.submit()"
+                data-i18n="btn.diagnose">Obtener Diagnóstico</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- === PASO 4: Dashboard de resultados === -->
+  <div class="wizard-step" id="step4">
+
+    <!-- Nota de idioma (solo visible en EN) -->
+    <div id="langNote"></div>
+
+    <!-- Semáforo + situación -->
+    <div class="card dashboard-section" id="sectionSemaforo">
+      <div class="semaforo-wrapper">
+        <div class="semaforo gris" id="semaforoWidget">
+          <div class="semaforo-luz luz-rojo"></div>
+          <div class="semaforo-luz luz-amarillo"></div>
+          <div class="semaforo-luz luz-verde"></div>
+          <span class="semaforo-label" data-i18n="dash.semaforo">Semáforo</span>
+        </div>
+        <div id="situacionBadge" class="situacion-badge gris" style="margin-top:1rem;">—</div>
+        <div class="certeza-row" style="margin-top:0.5rem;">
+          <span data-i18n="dash.certainty">Certeza del diagnóstico:</span>
+          <strong id="certezaVal">—</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Métricas clave -->
+    <div class="dashboard-section" id="sectionMetrics">
+      <div class="metrics-grid" id="metricsGrid"></div>
+    </div>
+
+    <!-- Recomendaciones -->
+    <div class="card dashboard-section" id="sectionRecomendaciones">
+      <h2 data-i18n="dash.recommendations">Recomendaciones del sistema</h2>
+      <ul class="rec-list" id="recList"></ul>
+    </div>
+
+    <!-- Proyección 6 meses -->
+    <div class="card dashboard-section" id="sectionChart">
+      <h2 data-i18n="dash.chart_title">Proyección de ahorro acumulado — 6 meses</h2>
+      <div class="chart-wrapper">
+        <canvas id="chartProyeccion"></canvas>
+      </div>
+    </div>
+
+    <!-- Botón reiniciar -->
+    <div style="text-align:center; margin: 1.5rem 0;">
+      <button class="btn btn-secondary" onclick="wizard.reset()"
+              data-i18n="btn.reset">← Nuevo diagnóstico</button>
+    </div>
+
+  </div>
+  <!-- /step4 -->
+
+</div>
+<!-- /container -->
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/dashboard.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/explainer.js"></script>
+<script src="assets/js/wizard.js"></script>
+<script>
+  // Aplicar idioma guardado al cargar
+  i18n.applyTranslations();
+</script>
+
+</body>
+</html>

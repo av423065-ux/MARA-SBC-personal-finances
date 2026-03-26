@@ -1,5 +1,5 @@
 """
-Módulo explicativo de FinExpert.
+Módulo explicativo de MARA.
 Convierte la bitácora de trazabilidad del motor de inferencia
 en explicaciones en lenguaje natural accesibles para el usuario.
 """

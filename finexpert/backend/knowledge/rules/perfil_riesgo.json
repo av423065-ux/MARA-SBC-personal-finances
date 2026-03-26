@@ -1,0 +1,144 @@
+[
+  {
+    "id": "PR01",
+    "dominio": "perfil_riesgo",
+    "descripcion": "Perfil agresivo: joven con horizonte largo",
+    "condiciones": [
+      {"variable": "edad",              "operador": "<",  "valor": 35},
+      {"variable": "horizonte_temporal","operador": ">",  "valor": 60}
+    ],
+    "conclusion": {"variable": "perfil_riesgo", "valor": "agresivo"},
+    "accion": "Con tu edad y horizonte temporal, puedes asumir más riesgo para maximizar rendimientos a largo plazo.",
+    "factor_certeza": 82,
+    "prioridad": 7,
+    "explicacion": "A menor edad y mayor horizonte temporal, los ciclos del mercado tienen tiempo de recuperarse. El riesgo de inversión en renta variable disminuye con el tiempo."
+  },
+  {
+    "id": "PR02",
+    "dominio": "perfil_riesgo",
+    "descripcion": "Perfil moderado: adulto activo con horizonte medio",
+    "condiciones": [
+      {"variable": "edad",               "operador": ">=", "valor": 35},
+      {"variable": "edad",               "operador": "<",  "valor": 50},
+      {"variable": "horizonte_temporal", "operador": ">",  "valor": 24},
+      {"variable": "perfil_riesgo",      "operador": "!=", "valor": "agresivo"}
+    ],
+    "conclusion": {"variable": "perfil_riesgo", "valor": "moderado"},
+    "accion": "Combina instrumentos de renta fija y variable en proporción 60/40 para balancear rendimiento y seguridad.",
+    "factor_certeza": 78,
+    "prioridad": 7,
+    "explicacion": "Con 35-50 años y horizonte de 2+ años, tienes tiempo suficiente para recuperarte de caídas del mercado sin resignar todo el potencial de crecimiento."
+  },
+  {
+    "id": "PR03",
+    "dominio": "perfil_riesgo",
+    "descripcion": "Perfil conservador: adulto mayor o horizonte corto",
+    "condiciones": [
+      {"variable": "edad",               "operador": ">=", "valor": 50},
+      {"variable": "horizonte_temporal", "operador": "<=", "valor": 36},
+      {"variable": "perfil_riesgo",      "operador": "!=", "valor": "agresivo"},
+      {"variable": "perfil_riesgo",      "operador": "!=", "valor": "moderado"},
+      {"variable": "perfil_riesgo",      "operador": "!=", "valor": "muy_conservador"}
+    ],
+    "conclusion": {"variable": "perfil_riesgo", "valor": "conservador"},
+    "accion": "Prioriza instrumentos de capital garantizado como CETES, pagarés bancarios y fondos de deuda gubernamental.",
+    "factor_certeza": 80,
+    "prioridad": 7,
+    "explicacion": "Con 50+ años o un horizonte corto, una caída del mercado puede no dar tiempo de recuperar pérdidas antes de necesitar el dinero."
+  },
+  {
+    "id": "PR04",
+    "dominio": "perfil_riesgo",
+    "descripcion": "Perfil muy conservador: próximo al retiro",
+    "condiciones": [
+      {"variable": "edad",          "operador": ">=", "valor": 60}
+    ],
+    "conclusion": {"variable": "perfil_riesgo", "valor": "muy_conservador"},
+    "accion": "Protege el capital acumulado. Instrumentos de renta fija de corto plazo y alta liquidez son prioritarios.",
+    "factor_certeza": 88,
+    "prioridad": 8,
+    "explicacion": "A partir de los 60 años la prioridad es conservar el patrimonio, no hacerlo crecer. La volatilidad del mercado puede eliminar años de acumulación."
+  },
+  {
+    "id": "PR05",
+    "dominio": "perfil_riesgo",
+    "descripcion": "Alta educación financiera: mayor tolerancia al riesgo",
+    "condiciones": [
+      {"variable": "nivel_educacion_financiera", "operador": ">=", "valor": 4},
+      {"variable": "horizonte_temporal",         "operador": ">",  "valor": 24}
+    ],
+    "conclusion": {"variable": "tolerancia_riesgo", "valor": "alta"},
+    "accion": "Tu educación financiera te permite entender y gestionar instrumentos más complejos. Aprovéchalo.",
+    "factor_certeza": 75,
+    "prioridad": 6,
+    "explicacion": "El conocimiento financiero reduce el riesgo percibido y el riesgo real, al tomar decisiones informadas y evitar pánico ante volatilidad normal del mercado."
+  },
+  {
+    "id": "PR06",
+    "dominio": "perfil_riesgo",
+    "descripcion": "Baja educación financiera: recomendar instrumentos simples",
+    "condiciones": [
+      {"variable": "nivel_educacion_financiera", "operador": "<=", "valor": 2}
+    ],
+    "conclusion": {"variable": "tolerancia_riesgo", "valor": "baja"},
+    "accion": "Empieza con CETES Directo o fondos de inversión diversificados. Edúcate antes de asumir mayor riesgo.",
+    "factor_certeza": 78,
+    "prioridad": 6,
+    "explicacion": "Con educación financiera baja existe mayor riesgo de tomar decisiones basadas en emoción. CETES y fondos indexados son seguros, simples y con rendimientos reales positivos."
+  },
+  {
+    "id": "PR07",
+    "dominio": "perfil_riesgo",
+    "descripcion": "Perfil agresivo con fondo sólido: puede invertir en renta variable",
+    "condiciones": [
+      {"variable": "perfil_riesgo",          "operador": "==", "valor": "agresivo"},
+      {"variable": "meses_fondo_emergencia", "operador": ">=", "valor": 6}
+    ],
+    "conclusion": {"variable": "puede_invertir_renta_variable", "valor": true},
+    "accion": "Tienes el perfil y el respaldo para invertir en ETFs, SIC o fondos de acciones diversificados globalmente.",
+    "factor_certeza": 85,
+    "prioridad": 8,
+    "explicacion": "Un perfil agresivo con fondo de emergencia sólido puede asumir la volatilidad de renta variable sin comprometer su seguridad financiera inmediata."
+  },
+  {
+    "id": "PR08",
+    "dominio": "perfil_riesgo",
+    "descripcion": "Perfil conservador: recomendar renta fija",
+    "condiciones": [
+      {"variable": "perfil_riesgo", "operador": "==", "valor": "conservador"}
+    ],
+    "conclusion": {"variable": "recomendacion_renta_fija", "valor": true},
+    "accion": "Instrumentos recomendados: CETES 28 días, CETES 91 días, pagarés bancarios, fondos de deuda gubernamental.",
+    "factor_certeza": 82,
+    "prioridad": 7,
+    "explicacion": "La renta fija garantiza el capital y ofrece rendimientos conocidos de antemano. Con CETES al ~10% anual, superas la inflación objetivo de Banxico (3%) con seguridad."
+  },
+  {
+    "id": "PR09",
+    "dominio": "perfil_riesgo",
+    "descripcion": "Ingreso variable: ajustar perfil hacia conservador",
+    "condiciones": [
+      {"variable": "tipo_ingreso",  "operador": "==", "valor": "variable"},
+      {"variable": "perfil_riesgo", "operador": "!=", "valor": "muy_conservador"}
+    ],
+    "conclusion": {"variable": "ajuste_perfil_ingreso_variable", "valor": true},
+    "accion": "Con ingresos variables, ajusta tu perfil un grado más conservador para mantener liquidez ante períodos sin ingresos.",
+    "factor_certeza": 75,
+    "prioridad": 6,
+    "explicacion": "La variabilidad de ingresos ya es en sí un riesgo. Añadir riesgo de inversión puede crear doble exposición. Mayor liquidez compensa la incertidumbre del ingreso."
+  },
+  {
+    "id": "PR10",
+    "dominio": "perfil_riesgo",
+    "descripcion": "Dependientes a cargo: ajuste hacia conservador",
+    "condiciones": [
+      {"variable": "num_dependientes", "operador": ">", "valor": 1},
+      {"variable": "edad",             "operador": ">", "valor": 40}
+    ],
+    "conclusion": {"variable": "ajuste_perfil_dependientes", "valor": true},
+    "accion": "Con dependientes a cargo en la adultez media, aumenta el peso de instrumentos seguros y asegúrate de tener seguro de vida.",
+    "factor_certeza": 72,
+    "prioridad": 6,
+    "explicacion": "Quienes sostienen dependientes no pueden permitirse pérdidas significativas de capital. La protección del patrimonio es prioritaria sobre el crecimiento."
+  }
+]

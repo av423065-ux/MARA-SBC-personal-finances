@@ -1,0 +1,141 @@
+[
+  {
+    "id": "FP01",
+    "dominio": "pronostico",
+    "descripcion": "Gasto creciente con déficits recurrentes: deterioro proyectado",
+    "condiciones": [
+      {"variable": "tendencia_gasto", "operador": "==", "valor": "creciente"},
+      {"variable": "meses_deficit",   "operador": ">",  "valor": 2}
+    ],
+    "conclusion": {"variable": "pronostico_6m", "valor": "deterioro"},
+    "accion": "Si no cambias algo hoy, en 6 meses tu situación será peor. Actúa ahora: revisa y recorta los 3 gastos más grandes.",
+    "factor_certeza": 88,
+    "prioridad": 8,
+    "explicacion": "Una tendencia de gasto creciente con déficits recurrentes señala un camino de deterioro acelerado. Sin intervención, la deuda acumulada puede volverse inmanejable."
+  },
+  {
+    "id": "FP02",
+    "dominio": "pronostico",
+    "descripcion": "Gasto estable con ahorro bajo: estancamiento financiero",
+    "condiciones": [
+      {"variable": "tendencia_gasto", "operador": "==", "valor": "estable"},
+      {"variable": "ratio_ahorro",    "operador": "<",  "valor": 0.10}
+    ],
+    "conclusion": {"variable": "pronostico_6m", "valor": "estancamiento"},
+    "accion": "Tu situación es estable pero sin progreso. Para avanzar necesitas un cambio activo: aumentar ingresos o reducir gastos variables.",
+    "factor_certeza": 75,
+    "prioridad": 7,
+    "explicacion": "El estancamiento financiero puede parecer inocuo, pero sin ahorro significativo no hay construcción patrimonial y la inflación erosiona el poder adquisitivo."
+  },
+  {
+    "id": "FP03",
+    "dominio": "pronostico",
+    "descripcion": "Gasto decreciente con ahorro positivo: mejora moderada proyectada",
+    "condiciones": [
+      {"variable": "tendencia_gasto", "operador": "==", "valor": "decreciente"},
+      {"variable": "ratio_ahorro",    "operador": ">=", "valor": 0.10}
+    ],
+    "conclusion": {"variable": "pronostico_6m", "valor": "mejora_moderada"},
+    "accion": "Vas por buen camino. Mantén la disciplina de reducción de gastos y en 6 meses tu situación mejorará notablemente.",
+    "factor_certeza": 80,
+    "prioridad": 7,
+    "explicacion": "Una tendencia de gasto decreciente combinada con ahorro positivo es la señal más clara de mejoría. El efecto compuesto en 6 meses puede ser significativo."
+  },
+  {
+    "id": "FP04",
+    "dominio": "pronostico",
+    "descripcion": "Ahorro creciente con tasa suficiente: mejora significativa",
+    "condiciones": [
+      {"variable": "tendencia_ahorro", "operador": "==", "valor": "creciente"},
+      {"variable": "ratio_ahorro",     "operador": ">=", "valor": 0.15}
+    ],
+    "conclusion": {"variable": "pronostico_6m", "valor": "mejora_significativa"},
+    "accion": "Excelente trayectoria. Consolida el hábito y considera aumentar la meta de ahorro al 25%.",
+    "factor_certeza": 85,
+    "prioridad": 8,
+    "explicacion": "Una tendencia de ahorro creciente al 15%+ es una de las señales más positivas. Proyectado a 6 meses, el crecimiento del ahorro acumulado puede sorprenderte."
+  },
+  {
+    "id": "FP05",
+    "dominio": "pronostico",
+    "descripcion": "Meta alcanzable en 6 meses con ahorro actual",
+    "condiciones": [
+      {"variable": "meta_monto",          "operador": ">",  "valor": 0},
+      {"variable": "ahorro_proyectado_6m","operador": ">=", "valor": 0}
+    ],
+    "conclusion": {"variable": "evaluacion_meta", "valor": "en_progreso"},
+    "accion": "Sigue ahorrando consistentemente para alcanzar tu meta. Revisa el progreso mensualmente.",
+    "factor_certeza": 70,
+    "prioridad": 6,
+    "explicacion": "Tu ahorro proyectado a 6 meses está siendo evaluado contra tu meta establecida. La consistencia mensual es clave para llegar al objetivo."
+  },
+  {
+    "id": "FP06",
+    "dominio": "pronostico",
+    "descripcion": "Riesgo de insolvencia por déficit prolongado",
+    "condiciones": [
+      {"variable": "meses_deficit", "operador": ">", "valor": 4}
+    ],
+    "conclusion": {"variable": "alerta_riesgo_insolvencia", "valor": true},
+    "accion": "URGENTE: llevas más de 4 meses con déficit. El riesgo de insolvencia es real. Busca asesoría financiera o acuerdo con acreedores.",
+    "factor_certeza": 93,
+    "prioridad": 9,
+    "explicacion": "Cuatro o más meses consecutivos de déficit indica que la situación no es puntual sino estructural. Sin intervención, el ciclo de deuda se vuelve autosustentable y creciente."
+  },
+  {
+    "id": "FP07",
+    "dominio": "pronostico",
+    "descripcion": "Cambio de hábitos activo con tendencia estable: mejora esperada",
+    "condiciones": [
+      {"variable": "cambio_habitos", "operador": "==", "valor": true},
+      {"variable": "tendencia_gasto","operador": "!=", "valor": "creciente"}
+    ],
+    "conclusion": {"variable": "probabilidad_mejora_pronostico", "valor": "alta"},
+    "accion": "El cambio de hábitos que estás implementando debería reflejarse en mejoras en 60-90 días. Mantén el registro para medir el avance.",
+    "factor_certeza": 78,
+    "prioridad": 7,
+    "explicacion": "Los cambios de hábitos financieros toman entre 60 y 90 días para impactar los ratios. La consistencia en las primeras semanas es el factor crítico de éxito."
+  },
+  {
+    "id": "FP08",
+    "dominio": "pronostico",
+    "descripcion": "Deterioro proyectado sin cambio de hábitos: intervención crítica",
+    "condiciones": [
+      {"variable": "pronostico_6m",  "operador": "==", "valor": "deterioro"},
+      {"variable": "cambio_habitos", "operador": "==", "valor": false}
+    ],
+    "conclusion": {"variable": "urgencia_intervencion", "valor": "critica"},
+    "accion": "Sin cambios urgentes tu situación se tornará inmanejable en 6 meses. Define hoy 3 acciones concretas para reducir gastos.",
+    "factor_certeza": 92,
+    "prioridad": 9,
+    "explicacion": "Un pronóstico de deterioro sin intención de cambio es la combinación más peligrosa. La inercia financiera negativa crece con el tiempo por el efecto compuesto de la deuda."
+  },
+  {
+    "id": "FP09",
+    "dominio": "pronostico",
+    "descripcion": "Reserva de impuestos para freelance",
+    "condiciones": [
+      {"variable": "tipo_ingreso",      "operador": "==", "valor": "variable"},
+      {"variable": "reserva_impuestos", "operador": "==", "valor": false}
+    ],
+    "conclusion": {"variable": "alerta_sin_reserva_impuestos", "valor": true},
+    "accion": "Reserva el 16-35% de cada pago recibido para ISR y IVA. Sin reserva, la declaración anual puede generar una deuda fiscal inesperada.",
+    "factor_certeza": 85,
+    "prioridad": 8,
+    "explicacion": "Los trabajadores independientes deben pagar ISR e IVA provisionales. No reservar provoca que el dinero se gaste y la obligación fiscal se convierta en deuda con el SAT."
+  },
+  {
+    "id": "FP10",
+    "dominio": "pronostico",
+    "descripcion": "Mejora significativa + cartera lista: recomendación de inversión activa",
+    "condiciones": [
+      {"variable": "pronostico_6m",              "operador": "==", "valor": "mejora_significativa"},
+      {"variable": "listo_para_cartera_inversion","operador": "==", "valor": true}
+    ],
+    "conclusion": {"variable": "recomendacion_inversion_activa", "valor": true},
+    "accion": "Tu trayectoria es excelente y tienes la base para activar una estrategia de inversión formal. El momento de actuar es ahora.",
+    "factor_certeza": 88,
+    "prioridad": 8,
+    "explicacion": "Cuando la tendencia de mejora se combina con bases financieras sólidas, cada mes de retraso en invertir es tiempo de capitalización perdido. La acción inmediata maximiza el resultado."
+  }
+]
