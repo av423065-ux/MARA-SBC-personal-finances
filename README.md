@@ -2,8 +2,7 @@
 
 **MARA** es un Sistema Basado en Conocimiento (SBC) de encadenamiento hacia adelante que diagnostica la salud financiera personal de un usuario mexicano y genera recomendaciones personalizadas, priorizadas y explicables.
 
-Desarrollado como proyecto académico en la **UAEH – ICBI**.
-Autores: **Mario Ávila** · **Eduardo Figueroa**
+Desarrolladores: **Mario Ávila** · **Eduardo Figueroa**
 
 ![Preview modo claro](architecture/preview1.png)
 ![Preview modo oscuro](architecture/preview2.png)
