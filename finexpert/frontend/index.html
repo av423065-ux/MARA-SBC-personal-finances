@@ -3,12 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MARA — Monitor y Asesor de Finanzas Personales y Ahorro</title>
+  <title>MARA — Diagnóstico Financiero</title>
   <link rel="stylesheet" href="assets/css/main.css" />
   <link rel="stylesheet" href="assets/css/wizard.css" />
   <link rel="stylesheet" href="assets/css/dashboard.css" />
   <!-- theme.js primero para evitar flash de tema incorrecto -->
   <script src="assets/js/theme.js"></script>
+  <script>
+    // Redirigir a portada si no se ingresó por ella
+    if (!sessionStorage.getItem('mara_entered')) {
+      window.location.replace('portada.html');
+    }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="assets/js/three.min.js"></script>
 </head>
@@ -35,168 +41,245 @@
     <p data-i18n="app.subtitle">Monitor y Asesor de Finanzas Personales y Ahorro</p>
   </header>
 
-  <!-- Barra de progreso del wizard -->
+  <!-- Barra de progreso del wizard (5 pasos) -->
   <nav class="wizard-progress" id="wizardProgress">
     <div class="step-item active" data-step="1">
-      <div class="step-circle">1</div>
-      <span class="step-label" data-i18n="step.label.1">Perfil</span>
+      <div class="step-circle">
+        <span class="step-icon">👤</span>
+        <span class="step-num">1</span>
+      </div>
+      <span class="step-label">Perfil</span>
     </div>
     <div class="step-item" data-step="2">
-      <div class="step-circle">2</div>
-      <span class="step-label" data-i18n="step.label.2">Finanzas</span>
+      <div class="step-circle">
+        <span class="step-icon">💵</span>
+        <span class="step-num">2</span>
+      </div>
+      <span class="step-label">Ingresos</span>
     </div>
     <div class="step-item" data-step="3">
-      <div class="step-circle">3</div>
-      <span class="step-label" data-i18n="step.label.3">Metas</span>
+      <div class="step-circle">
+        <span class="step-icon">💳</span>
+        <span class="step-num">3</span>
+      </div>
+      <span class="step-label">Deudas</span>
     </div>
     <div class="step-item" data-step="4">
-      <div class="step-circle">4</div>
-      <span class="step-label" data-i18n="step.label.4">Diagnóstico</span>
+      <div class="step-circle">
+        <span class="step-icon">🎯</span>
+        <span class="step-num">4</span>
+      </div>
+      <span class="step-label">Ahorro</span>
+    </div>
+    <div class="step-item" data-step="5">
+      <div class="step-circle">
+        <span class="step-icon">📊</span>
+        <span class="step-num">5</span>
+      </div>
+      <span class="step-label">Diagnóstico</span>
     </div>
   </nav>
 
   <!-- Alerta de errores -->
   <div id="errorAlert" class="alert alert-error" style="display:none;"></div>
 
-  <!-- === PASO 1: Perfil básico === -->
+  <!-- ═══════════════════════════════════════════════
+       PASO 1 — Perfil Personal
+       ═══════════════════════════════════════════════ -->
   <div class="wizard-step active" id="step1">
-    <div class="step-counter" data-i18n="step.counter.1">Paso 1 de 4</div>
     <div class="card">
-      <div class="step-header">
-        <h2 data-i18n="s1.title">Perfil personal</h2>
-        <p data-i18n="s1.subtitle">Cuéntanos un poco sobre ti para personalizar el diagnóstico.</p>
+      <!-- Banner del paso -->
+      <div class="step-banner step-banner-1">
+        <div class="step-banner-icon">👤</div>
+        <div class="step-banner-body">
+          <div class="step-banner-title" data-i18n="s1.title">Perfil Personal</div>
+          <div class="step-banner-sub" data-i18n="s1.subtitle">Cuéntanos sobre ti para personalizar el diagnóstico</div>
+        </div>
+        <div class="step-banner-counter">Paso 1 / 4</div>
       </div>
 
+      <!-- Edad y dependientes -->
       <div class="form-grid">
         <div class="form-group">
-          <label for="edad" data-i18n="s1.age">Edad</label>
+          <label for="edad" data-i18n="s1.age">
+            <span class="label-icon">🎂</span> Edad
+          </label>
           <input type="number" id="edad" name="edad" min="18" max="99" value="30"
                  oninput="this.value=this.value.slice(0,3)" />
         </div>
         <div class="form-group">
-          <label for="estado_civil" data-i18n="s1.marital">Estado civil</label>
-          <select id="estado_civil" name="estado_civil">
-            <option value="soltero"    data-i18n="s1.m.single">Soltero/a</option>
-            <option value="casado"     data-i18n="s1.m.married">Casado/a</option>
-            <option value="divorciado" data-i18n="s1.m.divorced">Divorciado/a</option>
-            <option value="viudo"      data-i18n="s1.m.widowed">Viudo/a</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="num_dependientes" data-i18n="s1.dependents">Número de dependientes</label>
+          <label for="num_dependientes" data-i18n="s1.dependents">
+            <span class="label-icon">👨‍👩‍👧</span> Dependientes económicos
+          </label>
           <input type="number" id="num_dependientes" min="0" max="10" value="0"
                  oninput="if(this.value>10)this.value=10;if(this.value<0)this.value=0" />
-          <span class="hint" data-i18n="s1.dependents.hint">Personas que dependen económicamente de ti</span>
-        </div>
-        <div class="form-group">
-          <label for="nivel_educacion_financiera" data-i18n="s1.edu">Educación financiera (1-5)</label>
-          <select id="nivel_educacion_financiera">
-            <option value="1" data-i18n="s1.edu.1">1 – Básica (no conozco mucho)</option>
-            <option value="2" data-i18n="s1.edu.2">2 – Media-baja</option>
-            <option value="3" selected data-i18n="s1.edu.3">3 – Media</option>
-            <option value="4" data-i18n="s1.edu.4">4 – Media-alta</option>
-            <option value="5" data-i18n="s1.edu.5">5 – Avanzada</option>
-          </select>
+          <span class="hint" data-i18n="s1.dependents.hint">Personas que dependen de ti económicamente</span>
         </div>
       </div>
 
+      <!-- Estado civil — Card Options -->
       <div class="form-group">
-        <label for="tipo_ingreso" data-i18n="s1.income_type">Tipo de ingreso</label>
-        <select id="tipo_ingreso">
-          <option value="fijo"     data-i18n="s1.i.fixed">Fijo (empleado, salario)</option>
-          <option value="variable" data-i18n="s1.i.variable">Variable (freelance, comisiones, negocio)</option>
+        <label data-i18n="s1.marital"><span class="label-icon">💍</span> Estado civil</label>
+        <!-- select oculto para que buildProfile() lo lea sin cambios -->
+        <select id="estado_civil" style="display:none;">
+          <option value="soltero">Soltero/a</option>
+          <option value="casado">Casado/a</option>
+          <option value="divorciado">Divorciado/a</option>
+          <option value="viudo">Viudo/a</option>
         </select>
+        <div class="card-options" data-for="estado_civil">
+          <label class="card-opt active" data-value="soltero">
+            <span class="opt-icon">🧑</span>
+            <span class="opt-label" data-i18n="s1.m.single">Soltero/a</span>
+          </label>
+          <label class="card-opt" data-value="casado">
+            <span class="opt-icon">💑</span>
+            <span class="opt-label" data-i18n="s1.m.married">Casado/a</span>
+          </label>
+          <label class="card-opt" data-value="divorciado">
+            <span class="opt-icon">📄</span>
+            <span class="opt-label" data-i18n="s1.m.divorced">Divorciado/a</span>
+          </label>
+          <label class="card-opt" data-value="viudo">
+            <span class="opt-icon">🌻</span>
+            <span class="opt-label" data-i18n="s1.m.widowed">Viudo/a</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Tipo de ingreso — Card Options -->
+      <div class="form-group">
+        <label data-i18n="s1.income_type"><span class="label-icon">💼</span> Tipo de ingreso</label>
+        <select id="tipo_ingreso" style="display:none;">
+          <option value="fijo">Fijo</option>
+          <option value="variable">Variable</option>
+        </select>
+        <div class="card-options card-options-2" data-for="tipo_ingreso">
+          <label class="card-opt card-opt-lg active" data-value="fijo">
+            <span class="opt-icon opt-icon-lg">🏢</span>
+            <span class="opt-label" data-i18n="s1.i.fixed">Fijo</span>
+            <span class="opt-desc">Empleado / Salario</span>
+          </label>
+          <label class="card-opt card-opt-lg" data-value="variable">
+            <span class="opt-icon opt-icon-lg">📊</span>
+            <span class="opt-label" data-i18n="s1.i.variable">Variable</span>
+            <span class="opt-desc">Freelance / Negocio</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Educación financiera — Estrellas -->
+      <div class="form-group">
+        <label data-i18n="s1.edu"><span class="label-icon">📚</span> Educación financiera</label>
+        <select id="nivel_educacion_financiera" style="display:none;">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3" selected>3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+        <div class="edu-stars" data-for="nivel_educacion_financiera">
+          <button class="edu-star" data-val="1" type="button" title="Básica">★</button>
+          <button class="edu-star" data-val="2" type="button" title="Media-baja">★</button>
+          <button class="edu-star active" data-val="3" type="button" title="Media">★</button>
+          <button class="edu-star" data-val="4" type="button" title="Media-alta">★</button>
+          <button class="edu-star" data-val="5" type="button" title="Avanzada">★</button>
+          <span class="edu-label" id="eduLabel">Media (3)</span>
+        </div>
+        <span class="hint">1 = básica &nbsp;·&nbsp; 5 = avanzada</span>
       </div>
 
       <div class="wizard-footer">
-        <div></div>
+        <button class="btn btn-back" onclick="window.location.href='portada.html'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+          </svg>
+          Portada
+        </button>
         <button class="btn btn-primary" onclick="wizard.next()" data-i18n="btn.next">Siguiente →</button>
       </div>
     </div>
   </div>
 
-  <!-- === PASO 2: Ingresos, gastos y deudas === -->
+
+  <!-- ═══════════════════════════════════════════════
+       PASO 2 — Ingresos & Gastos
+       ═══════════════════════════════════════════════ -->
   <div class="wizard-step" id="step2">
-    <div class="step-counter" data-i18n="step.counter.2">Paso 2 de 4</div>
     <div class="card">
-      <div class="step-header">
-        <h2 data-i18n="s2.title">Ingresos, gastos y deudas</h2>
-        <p data-i18n="s2.subtitle">Usa tus promedios mensuales en pesos mexicanos (MXN).</p>
+      <div class="step-banner step-banner-2">
+        <div class="step-banner-icon">💵</div>
+        <div class="step-banner-body">
+          <div class="step-banner-title" data-i18n="s2.title">Ingresos &amp; Gastos</div>
+          <div class="step-banner-sub">Usa tus promedios mensuales en pesos (MXN)</div>
+        </div>
+        <div class="step-banner-counter">Paso 2 / 4</div>
       </div>
 
-      <div class="section-divider" data-i18n="s2.sec.income">Ingresos</div>
-      <div class="form-group">
-        <label for="ingreso_mensual" data-i18n="s2.income">Ingreso mensual neto ($)</label>
-        <input type="number" id="ingreso_mensual" min="0" step="100"
-               data-i18n-ph="s2.income.ph" placeholder="Ej: 15000" />
+      <!-- Ingreso mensual (campo destacado) -->
+      <div class="form-group featured-input-group">
+        <label for="ingreso_mensual" data-i18n="s2.income">
+          <span class="label-icon">💰</span> Ingreso mensual neto
+        </label>
+        <div class="featured-input-wrap">
+          <span class="featured-input-prefix">$</span>
+          <input type="number" id="ingreso_mensual" min="0" step="100"
+                 class="featured-input"
+                 data-i18n-ph="s2.income.ph" placeholder="Ej: 15,000" />
+          <span class="featured-input-suffix">MXN</span>
+        </div>
         <span class="hint" data-i18n="s2.income.hint">Lo que recibes después de impuestos y deducciones</span>
       </div>
 
-      <div class="section-divider" data-i18n="s2.sec.expenses">Gastos</div>
+      <!-- Regla 50/30/20 visual hint -->
+      <div class="rule-hint">
+        <span class="rule-hint-label">Regla 50/30/20 ideal:</span>
+        <span class="rule-pill rule-pill-fixed">50% Gastos fijos</span>
+        <span class="rule-pill rule-pill-var">30% Variables</span>
+        <span class="rule-pill rule-pill-save">20% Ahorro</span>
+      </div>
+
+      <!-- Gastos -->
+      <div class="section-divider">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:6px;">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        Gastos mensuales
+      </div>
+
       <div class="form-grid">
         <div class="form-group">
-          <label for="gastos_fijos" data-i18n="s2.fixed_exp">Gastos fijos mensuales ($)</label>
+          <label for="gastos_fijos" data-i18n="s2.fixed_exp">
+            <span class="label-icon">🏠</span> Gastos fijos ($)
+          </label>
           <input type="number" id="gastos_fijos" min="0" step="100"
-                 data-i18n-ph="s2.fixed_exp.ph" placeholder="Ej: 7000" />
-          <span class="hint" data-i18n="s2.fixed_exp.hint">Renta, servicios, transporte fijo</span>
+                 data-i18n-ph="s2.fixed_exp.ph" placeholder="Ej: 7,000" />
+          <span class="hint" data-i18n="s2.fixed_exp.hint">Renta, servicios, transporte</span>
         </div>
         <div class="form-group">
-          <label for="gastos_variables" data-i18n="s2.var_exp">Gastos variables mensuales ($)</label>
+          <label for="gastos_variables" data-i18n="s2.var_exp">
+            <span class="label-icon">🛒</span> Gastos variables ($)
+          </label>
           <input type="number" id="gastos_variables" min="0" step="100"
-                 data-i18n-ph="s2.var_exp.ph" placeholder="Ej: 3000" />
-          <span class="hint" data-i18n="s2.var_exp.hint">Alimentación, entretenimiento, ropa</span>
+                 data-i18n-ph="s2.var_exp.ph" placeholder="Ej: 3,000" />
+          <span class="hint" data-i18n="s2.var_exp.hint">Alimentación, entretenimiento</span>
         </div>
       </div>
 
-      <div class="section-divider" data-i18n="s2.sec.debts">Deudas</div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="pago_mensual_deudas" data-i18n="s2.debt_pay">Pago mensual de deudas ($)</label>
-          <input type="number" id="pago_mensual_deudas" min="0" step="100"
-                 data-i18n-ph="s2.debt_pay.ph" placeholder="Ej: 2500" value="0" />
-          <span class="hint" data-i18n="s2.debt_pay.hint">Suma de todos tus pagos mensuales de créditos</span>
+      <!-- Barra de ratio en vivo -->
+      <div class="ratio-live" id="ratioLive" style="display:none;">
+        <div class="ratio-live-label">Distribución de tu ingreso</div>
+        <div class="ratio-bar">
+          <div class="ratio-segment ratio-fixed"  id="rFixed"  style="width:0%"></div>
+          <div class="ratio-segment ratio-var"    id="rVar"    style="width:0%"></div>
+          <div class="ratio-segment ratio-left"   id="rLeft"   style="width:100%"></div>
         </div>
-        <div class="form-group">
-          <label for="deuda_total" data-i18n="s2.debt_total">Deuda total acumulada ($)</label>
-          <input type="number" id="deuda_total" min="0" step="1000"
-                 data-i18n-ph="s2.debt_total.ph" placeholder="Ej: 50000" value="0" />
+        <div class="ratio-legend">
+          <span class="rl-dot rl-fixed"></span><span id="rFixedPct">—</span> fijos &nbsp;
+          <span class="rl-dot rl-var"></span><span id="rVarPct">—</span> variables &nbsp;
+          <span class="rl-dot rl-left"></span><span id="rLeftPct">—</span> disponible
         </div>
-        <div class="form-group">
-          <label for="tasa_promedio_anual" data-i18n="s2.rate">Tasa de interés promedio anual (%)</label>
-          <input type="number" id="tasa_promedio_anual" min="0" max="200" step="0.1"
-                 data-i18n-ph="s2.rate.ph" placeholder="Ej: 28" value="0" />
-          <span class="hint" data-i18n="s2.rate.hint">Ingresa el porcentaje (ej: 28 para 28%)</span>
-        </div>
-        <div class="form-group">
-          <label for="num_creditos" data-i18n="s2.credits">Número de créditos activos</label>
-          <input type="number" id="num_creditos" min="0" max="20" value="0" />
-        </div>
-      </div>
-
-      <div class="section-divider" data-i18n="s2.sec.debt_status">Situación de deuda</div>
-      <div class="form-check">
-        <input type="checkbox" id="tiene_tarjeta_credito" />
-        <label for="tiene_tarjeta_credito" data-i18n="s2.has_card">Tengo tarjeta(s) de crédito</label>
-      </div>
-      <div class="form-check">
-        <input type="checkbox" id="paga_minimo_tarjeta" />
-        <label for="paga_minimo_tarjeta" data-i18n="s2.pays_min">Solo pago el mínimo de mi(s) tarjeta(s)</label>
-      </div>
-      <div class="form-check">
-        <input type="checkbox" id="tiene_hipoteca" />
-        <label for="tiene_hipoteca" data-i18n="s2.has_mortgage">Tengo hipoteca (crédito de vivienda)</label>
-      </div>
-      <div class="form-check">
-        <input type="checkbox" id="tiene_credito_nomina" />
-        <label for="tiene_credito_nomina" data-i18n="s2.has_payroll">Tengo crédito de nómina</label>
-      </div>
-      <div class="form-check">
-        <input type="checkbox" id="tiene_deuda_tasa_variable" />
-        <label for="tiene_deuda_tasa_variable" data-i18n="s2.variable_rate">Alguna deuda tiene tasa variable</label>
-      </div>
-      <div class="form-check">
-        <input type="checkbox" id="usa_credito_para_gastos_basicos" />
-        <label for="usa_credito_para_gastos_basicos" data-i18n="s2.credit_basics">Uso crédito para pagar gastos básicos</label>
       </div>
 
       <div class="wizard-footer">
@@ -206,137 +289,362 @@
     </div>
   </div>
 
-  <!-- === PASO 3: Ahorro, metas e inversión === -->
+
+  <!-- ═══════════════════════════════════════════════
+       PASO 3 — Deudas
+       ═══════════════════════════════════════════════ -->
   <div class="wizard-step" id="step3">
-    <div class="step-counter" data-i18n="step.counter.3">Paso 3 de 4</div>
     <div class="card">
-      <div class="step-header">
-        <h2 data-i18n="s3.title">Ahorro, metas e inversión</h2>
-        <p data-i18n="s3.subtitle">Esta información define tu perfil de riesgo y pronóstico financiero.</p>
+      <div class="step-banner step-banner-3">
+        <div class="step-banner-icon">💳</div>
+        <div class="step-banner-body">
+          <div class="step-banner-title">Situación de Deudas</div>
+          <div class="step-banner-sub">Agrega todos tus créditos y obligaciones activas</div>
+        </div>
+        <div class="step-banner-counter">Paso 3 / 4</div>
       </div>
 
-      <div class="section-divider" data-i18n="s3.sec.savings">Situación de ahorro</div>
+      <!-- Datos numéricos de deuda -->
       <div class="form-grid">
         <div class="form-group">
-          <label for="meses_fondo_emergencia" data-i18n="s3.emergency">Fondo de emergencia (meses)</label>
-          <input type="number" id="meses_fondo_emergencia" min="0" max="36" step="0.5" value="0" />
-          <span class="hint" data-i18n="s3.emergency.hint">Meses de gastos cubiertos si perdieras el ingreso</span>
+          <label for="pago_mensual_deudas" data-i18n="s2.debt_pay">
+            <span class="label-icon">📆</span> Pago mensual ($)
+          </label>
+          <input type="number" id="pago_mensual_deudas" min="0" step="100"
+                 data-i18n-ph="s2.debt_pay.ph" placeholder="Ej: 2,500" value="0" />
+          <span class="hint" data-i18n="s2.debt_pay.hint">Suma de todos tus pagos mensuales</span>
         </div>
         <div class="form-group">
-          <label for="capital_disponible" data-i18n="s3.capital">Capital disponible para invertir ($)</label>
-          <input type="number" id="capital_disponible" min="0" step="500" value="0" />
-          <span class="hint" data-i18n="s3.capital.hint">Ahorro acumulado disponible, no el fondo de emergencia</span>
+          <label for="deuda_total" data-i18n="s2.debt_total">
+            <span class="label-icon">📋</span> Deuda total ($)
+          </label>
+          <input type="number" id="deuda_total" min="0" step="1000"
+                 data-i18n-ph="s2.debt_total.ph" placeholder="Ej: 50,000" value="0" />
         </div>
         <div class="form-group">
-          <label for="num_instrumentos" data-i18n="s3.instruments">Instrumentos de inversión activos</label>
-          <input type="number" id="num_instrumentos" min="0" max="20" value="0" />
-          <span class="hint" data-i18n="s3.instruments.hint">CETES, fondos, acciones, etc.</span>
+          <label for="tasa_promedio_anual" data-i18n="s2.rate">
+            <span class="label-icon">📈</span> Tasa de interés anual (%)
+          </label>
+          <input type="number" id="tasa_promedio_anual" min="0" max="200" step="0.1"
+                 data-i18n-ph="s2.rate.ph" placeholder="Ej: 28" value="0" />
+          <span class="hint" data-i18n="s2.rate.hint">Promedio entre todos tus créditos</span>
         </div>
         <div class="form-group">
-          <label for="tasa_rendimiento_esperada" data-i18n="s3.return">Rendimiento esperado anual (%)</label>
-          <input type="number" id="tasa_rendimiento_esperada" min="0" max="100" step="0.5" value="0" />
+          <label for="num_creditos" data-i18n="s2.credits">
+            <span class="label-icon">🔢</span> Núm. de créditos activos
+          </label>
+          <input type="number" id="num_creditos" min="0" max="20" value="0" />
         </div>
       </div>
 
-      <div class="form-check">
-        <input type="checkbox" id="ahorro_automatico" />
-        <label for="ahorro_automatico" data-i18n="s3.auto_save">Tengo ahorro automático configurado</label>
-      </div>
-      <div class="form-check">
-        <input type="checkbox" id="lleva_registro_gastos" />
-        <label for="lleva_registro_gastos" data-i18n="s3.tracks_exp">Llevo registro de mis gastos</label>
-      </div>
-      <div class="form-check">
-        <input type="checkbox" id="paga_ISR" />
-        <label for="paga_ISR" data-i18n="s3.pays_isr">Considero el ISR en mis inversiones</label>
-      </div>
-
-      <div class="section-divider" data-i18n="s3.sec.goal">Meta financiera</div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="objetivo_principal" data-i18n="s3.goal_type">Objetivo principal</label>
-          <select id="objetivo_principal">
-            <option value="ahorro"     data-i18n="s3.g.savings">Crear fondo de emergencia</option>
-            <option value="deuda"      data-i18n="s3.g.debt">Liquidar deudas</option>
-            <option value="inversion"  data-i18n="s3.g.invest">Empezar a invertir</option>
-            <option value="retiro"     data-i18n="s3.g.retirement">Ahorro para el retiro</option>
-            <option value="emergencia" data-i18n="s3.g.emergency">Cubrir una emergencia actual</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="horizonte_temporal" data-i18n="s3.horizon">Horizonte temporal (meses)</label>
-          <input type="number" id="horizonte_temporal" min="1" max="600" value="12"
-                 oninput="if(this.value>600)this.value=600;if(this.value<1)this.value=1" />
-        </div>
-        <div class="form-group">
-          <label for="meta_monto" data-i18n="s3.goal_amount">Monto de la meta ($)</label>
-          <input type="number" id="meta_monto" min="0" step="1000" value="0" />
-        </div>
-        <div class="form-group">
-          <label for="meses_deficit" data-i18n="s3.deficit_months">Meses con déficit reciente</label>
-          <input type="number" id="meses_deficit" min="0" max="24" value="0" />
-          <span class="hint" data-i18n="s3.deficit_months.hint">Meses recientes en que gastaste más de lo que ganaste</span>
-        </div>
+      <!-- Tendencia de tasas -->
+      <div class="form-group">
+        <label for="tendencia_tasas" data-i18n="s3.rates_trend">
+          <span class="label-icon">📉</span> Tendencia de tasas de interés
+        </label>
+        <select id="tendencia_tasas">
+          <option value="estable" data-i18n="s3.t.stable">Estable</option>
+          <option value="alza"    data-i18n="s3.t.up">Al alza</option>
+          <option value="baja"    data-i18n="s3.t.down">A la baja</option>
+        </select>
       </div>
 
-      <div class="section-divider" data-i18n="s3.sec.trends">Tendencias y hábitos</div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="tendencia_gasto" data-i18n="s3.expense_trend">Tendencia de gastos últimos 3 meses</label>
-          <select id="tendencia_gasto">
-            <option value="estable"    data-i18n="s3.t.stable_exp">Estable (sin cambios)</option>
-            <option value="creciente"  data-i18n="s3.t.rising_exp">Creciente (han aumentado)</option>
-            <option value="decreciente" data-i18n="s3.t.falling_exp">Decreciente (han bajado)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="tendencia_ahorro" data-i18n="s3.savings_trend">Tendencia de ahorro últimos 3 meses</label>
-          <select id="tendencia_ahorro">
-            <option value="estable"    data-i18n="s3.t.stable">Estable</option>
-            <option value="creciente"  data-i18n="s3.t.rising">Creciente</option>
-            <option value="decreciente" data-i18n="s3.t.falling">Decreciente</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="tendencia_tasas" data-i18n="s3.rates_trend">Tendencia de tasas de interés</label>
-          <select id="tendencia_tasas">
-            <option value="estable" data-i18n="s3.t.stable">Estable</option>
-            <option value="alza"    data-i18n="s3.t.up">Alza</option>
-            <option value="baja"    data-i18n="s3.t.down">Baja</option>
-          </select>
-        </div>
+      <!-- Checkboxes como toggle-cards -->
+      <div class="section-divider">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:6px;">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+          <line x1="1" y1="10" x2="23" y2="10"/>
+        </svg>
+        ¿Cuáles aplican en tu caso?
       </div>
 
-      <div class="form-check">
-        <input type="checkbox" id="cambio_habitos" />
-        <label for="cambio_habitos" data-i18n="s3.changing_habits">Estoy implementando cambios en mis hábitos financieros</label>
-      </div>
-      <div class="form-check">
-        <input type="checkbox" id="mes_alto_gasto" />
-        <label for="mes_alto_gasto" data-i18n="s3.high_month">Este mes tuve gastos extraordinarios</label>
-      </div>
-      <div class="form-check">
-        <input type="checkbox" id="reserva_impuestos" />
-        <label for="reserva_impuestos" data-i18n="s3.tax_reserve">Reservo dinero para impuestos (freelance/negocio)</label>
-      </div>
-      <div class="form-check">
-        <input type="checkbox" id="pago_extra_deuda_check" />
-        <label for="pago_extra_deuda_check" data-i18n="s3.extra_payment">Hago pagos extras a mis deudas</label>
+      <div class="toggle-cards-grid">
+        <label class="toggle-card">
+          <input type="checkbox" id="tiene_tarjeta_credito" />
+          <span class="tc-icon">💳</span>
+          <span class="tc-text" data-i18n="s2.has_card">Tengo tarjeta(s) de crédito</span>
+          <span class="tc-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </label>
+        <label class="toggle-card toggle-card-warn">
+          <input type="checkbox" id="paga_minimo_tarjeta" />
+          <span class="tc-icon">⚠️</span>
+          <span class="tc-text" data-i18n="s2.pays_min">Solo pago el mínimo de tarjeta</span>
+          <span class="tc-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </label>
+        <label class="toggle-card">
+          <input type="checkbox" id="tiene_hipoteca" />
+          <span class="tc-icon">🏡</span>
+          <span class="tc-text" data-i18n="s2.has_mortgage">Tengo hipoteca / crédito vivienda</span>
+          <span class="tc-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </label>
+        <label class="toggle-card">
+          <input type="checkbox" id="tiene_credito_nomina" />
+          <span class="tc-icon">🏦</span>
+          <span class="tc-text" data-i18n="s2.has_payroll">Tengo crédito de nómina</span>
+          <span class="tc-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </label>
+        <label class="toggle-card toggle-card-warn">
+          <input type="checkbox" id="tiene_deuda_tasa_variable" />
+          <span class="tc-icon">📊</span>
+          <span class="tc-text" data-i18n="s2.variable_rate">Alguna deuda tiene tasa variable</span>
+          <span class="tc-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </label>
+        <label class="toggle-card toggle-card-danger">
+          <input type="checkbox" id="usa_credito_para_gastos_basicos" />
+          <span class="tc-icon">🚨</span>
+          <span class="tc-text" data-i18n="s2.credit_basics">Uso crédito para gastos básicos</span>
+          <span class="tc-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </label>
       </div>
 
       <div class="wizard-footer">
         <button class="btn btn-secondary" onclick="wizard.prev()" data-i18n="btn.prev">← Anterior</button>
-        <button class="btn btn-primary" id="btnDiagnosticar" onclick="wizard.submit()"
-                data-i18n="btn.diagnose">Obtener Diagnóstico</button>
+        <button class="btn btn-primary"   onclick="wizard.next()" data-i18n="btn.next">Siguiente →</button>
       </div>
     </div>
   </div>
 
-  <!-- === PASO 4: Dashboard de resultados === -->
+
+  <!-- ═══════════════════════════════════════════════
+       PASO 4 — Ahorro, Metas & Hábitos
+       ═══════════════════════════════════════════════ -->
   <div class="wizard-step" id="step4">
+    <div class="card">
+      <div class="step-banner step-banner-4">
+        <div class="step-banner-icon">🎯</div>
+        <div class="step-banner-body">
+          <div class="step-banner-title" data-i18n="s3.title">Ahorro, Metas &amp; Hábitos</div>
+          <div class="step-banner-sub" data-i18n="s3.subtitle">Define tu perfil de riesgo y horizonte financiero</div>
+        </div>
+        <div class="step-banner-counter">Paso 4 / 4</div>
+      </div>
+
+      <!-- Situación de ahorro -->
+      <div class="section-divider">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:6px;">
+          <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/>
+        </svg>
+        Fondo de emergencia &amp; Inversión
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="meses_fondo_emergencia" data-i18n="s3.emergency">
+            <span class="label-icon">🛡️</span> Fondo de emergencia (meses)
+          </label>
+          <input type="number" id="meses_fondo_emergencia" min="0" max="36" step="0.5" value="0" />
+          <span class="hint" data-i18n="s3.emergency.hint">Meses de gastos que tienes cubiertos</span>
+        </div>
+        <div class="form-group">
+          <label for="capital_disponible" data-i18n="s3.capital">
+            <span class="label-icon">💎</span> Capital para invertir ($)
+          </label>
+          <input type="number" id="capital_disponible" min="0" step="500" value="0" />
+          <span class="hint" data-i18n="s3.capital.hint">Ahorro extra (no el fondo de emergencia)</span>
+        </div>
+        <div class="form-group">
+          <label for="num_instrumentos" data-i18n="s3.instruments">
+            <span class="label-icon">📈</span> Instrumentos de inversión activos
+          </label>
+          <input type="number" id="num_instrumentos" min="0" max="20" value="0" />
+          <span class="hint" data-i18n="s3.instruments.hint">CETES, fondos, acciones, etc.</span>
+        </div>
+        <div class="form-group">
+          <label for="tasa_rendimiento_esperada" data-i18n="s3.return">
+            <span class="label-icon">📊</span> Rendimiento esperado anual (%)
+          </label>
+          <input type="number" id="tasa_rendimiento_esperada" min="0" max="100" step="0.5" value="0" />
+        </div>
+      </div>
+
+      <!-- Hábitos de ahorro e inversión -->
+      <div class="toggle-cards-grid toggle-cards-3col">
+        <label class="toggle-card">
+          <input type="checkbox" id="ahorro_automatico" />
+          <span class="tc-icon">⚡</span>
+          <span class="tc-text" data-i18n="s3.auto_save">Ahorro automático configurado</span>
+          <span class="tc-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </label>
+        <label class="toggle-card">
+          <input type="checkbox" id="lleva_registro_gastos" />
+          <span class="tc-icon">📓</span>
+          <span class="tc-text" data-i18n="s3.tracks_exp">Llevo registro de gastos</span>
+          <span class="tc-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </label>
+        <label class="toggle-card">
+          <input type="checkbox" id="paga_ISR" />
+          <span class="tc-icon">🧾</span>
+          <span class="tc-text" data-i18n="s3.pays_isr">Considero ISR en inversiones</span>
+          <span class="tc-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </label>
+      </div>
+
+      <!-- Meta financiera -->
+      <div class="section-divider">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:6px;">
+          <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+        </svg>
+        Meta financiera principal
+      </div>
+
+      <!-- Objetivo — Card Options grande -->
+      <div class="form-group">
+        <label data-i18n="s3.goal_type"><span class="label-icon">🏆</span> ¿Cuál es tu objetivo?</label>
+        <select id="objetivo_principal" style="display:none;">
+          <option value="ahorro">Crear fondo de emergencia</option>
+          <option value="deuda">Liquidar deudas</option>
+          <option value="inversion">Empezar a invertir</option>
+          <option value="retiro">Ahorro para el retiro</option>
+          <option value="emergencia">Cubrir emergencia actual</option>
+        </select>
+        <div class="card-options card-options-5" data-for="objetivo_principal">
+          <label class="card-opt card-opt-goal active" data-value="ahorro">
+            <span class="opt-icon opt-icon-lg">🛡️</span>
+            <span class="opt-label" data-i18n="s3.g.savings">Fondo emergencia</span>
+          </label>
+          <label class="card-opt card-opt-goal" data-value="deuda">
+            <span class="opt-icon opt-icon-lg">💳</span>
+            <span class="opt-label" data-i18n="s3.g.debt">Liquidar deudas</span>
+          </label>
+          <label class="card-opt card-opt-goal" data-value="inversion">
+            <span class="opt-icon opt-icon-lg">📈</span>
+            <span class="opt-label" data-i18n="s3.g.invest">Invertir</span>
+          </label>
+          <label class="card-opt card-opt-goal" data-value="retiro">
+            <span class="opt-icon opt-icon-lg">🏖️</span>
+            <span class="opt-label" data-i18n="s3.g.retirement">Retiro</span>
+          </label>
+          <label class="card-opt card-opt-goal" data-value="emergencia">
+            <span class="opt-icon opt-icon-lg">🚨</span>
+            <span class="opt-label" data-i18n="s3.g.emergency">Emergencia</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="horizonte_temporal" data-i18n="s3.horizon">
+            <span class="label-icon">⏳</span> Horizonte temporal (meses)
+          </label>
+          <input type="number" id="horizonte_temporal" min="1" max="600" value="12"
+                 oninput="if(this.value>600)this.value=600;if(this.value<1)this.value=1" />
+        </div>
+        <div class="form-group">
+          <label for="meta_monto" data-i18n="s3.goal_amount">
+            <span class="label-icon">💵</span> Monto de la meta ($)
+          </label>
+          <input type="number" id="meta_monto" min="0" step="1000" value="0" />
+        </div>
+        <div class="form-group">
+          <label for="meses_deficit" data-i18n="s3.deficit_months">
+            <span class="label-icon">📉</span> Meses con déficit reciente
+          </label>
+          <input type="number" id="meses_deficit" min="0" max="24" value="0" />
+          <span class="hint" data-i18n="s3.deficit_months.hint">Meses en que gasté más de lo que gané</span>
+        </div>
+      </div>
+
+      <!-- Tendencias y hábitos -->
+      <div class="section-divider">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:6px;">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        Tendencias &amp; Hábitos (últimos 3 meses)
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="tendencia_gasto" data-i18n="s3.expense_trend">
+            <span class="label-icon">🛒</span> Tendencia de gastos
+          </label>
+          <select id="tendencia_gasto">
+            <option value="estable"    data-i18n="s3.t.stable_exp">Estable</option>
+            <option value="creciente"  data-i18n="s3.t.rising_exp">Creciente ↑</option>
+            <option value="decreciente" data-i18n="s3.t.falling_exp">Decreciente ↓</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tendencia_ahorro" data-i18n="s3.savings_trend">
+            <span class="label-icon">🐷</span> Tendencia de ahorro
+          </label>
+          <select id="tendencia_ahorro">
+            <option value="estable"    data-i18n="s3.t.stable">Estable</option>
+            <option value="creciente"  data-i18n="s3.t.rising">Creciente ↑</option>
+            <option value="decreciente" data-i18n="s3.t.falling">Decreciente ↓</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="toggle-cards-grid toggle-cards-2col">
+        <label class="toggle-card">
+          <input type="checkbox" id="cambio_habitos" />
+          <span class="tc-icon">🔄</span>
+          <span class="tc-text" data-i18n="s3.changing_habits">Implementando cambios en hábitos</span>
+          <span class="tc-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </label>
+        <label class="toggle-card">
+          <input type="checkbox" id="mes_alto_gasto" />
+          <span class="tc-icon">🔔</span>
+          <span class="tc-text" data-i18n="s3.high_month">Tuve gastos extraordinarios este mes</span>
+          <span class="tc-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </label>
+        <label class="toggle-card">
+          <input type="checkbox" id="reserva_impuestos" />
+          <span class="tc-icon">🧾</span>
+          <span class="tc-text" data-i18n="s3.tax_reserve">Reservo para impuestos (freelance)</span>
+          <span class="tc-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </label>
+        <label class="toggle-card">
+          <input type="checkbox" id="pago_extra_deuda_check" />
+          <span class="tc-icon">💪</span>
+          <span class="tc-text" data-i18n="s3.extra_payment">Hago pagos extra a mis deudas</span>
+          <span class="tc-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </label>
+      </div>
+
+      <div class="wizard-footer">
+        <button class="btn btn-secondary" onclick="wizard.prev()" data-i18n="btn.prev">← Anterior</button>
+        <button class="btn btn-primary btn-diagnose" id="btnDiagnosticar" onclick="wizard.submit()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px;">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <span data-i18n="btn.diagnose">Obtener Diagnóstico</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════
+       PASO 5 — Dashboard de resultados
+       ═══════════════════════════════════════════════ -->
+  <div class="wizard-step" id="step5">
 
     <!-- Nota de idioma (solo visible en EN) -->
     <div id="langNote"></div>
+
+    <!-- Encabezado del diagnóstico -->
+    <div class="dash-header card">
+      <div class="dash-header-inner">
+        <div class="dash-header-text">
+          <h2 class="dash-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-3px;margin-right:6px;">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            Diagnóstico MARA
+          </h2>
+          <p class="dash-sub" data-i18n="app.subtitle">Monitor y Asesor de Finanzas Personales y Ahorro</p>
+        </div>
+        <button class="btn btn-secondary btn-nuevo" onclick="wizard.reset()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.79"/>
+          </svg>
+          <span data-i18n="btn.reset">Nuevo diagnóstico</span>
+        </button>
+      </div>
+    </div>
 
     <!-- Semáforo + situación -->
     <div class="card dashboard-section" id="sectionSemaforo">
@@ -374,20 +682,16 @@
       </div>
     </div>
 
-    <!-- Botón reiniciar -->
-    <div style="text-align:center; margin: 1.5rem 0;">
-      <button class="btn btn-secondary" onclick="wizard.reset()"
-              data-i18n="btn.reset">← Nuevo diagnóstico</button>
-    </div>
-
   </div>
-  <!-- /step4 -->
+  <!-- /step5 -->
 
 </div>
 <!-- /container -->
 
 <footer class="app-footer">
-  Desarrollado por: Eduardo Figueroa &amp; Mario Ávila
+  MARA &mdash; Sistema Basado en Conocimiento &nbsp;|&nbsp;
+  Desarrollado por: Eduardo Figueroa &amp; Mario Ávila &nbsp;·&nbsp;
+  UAEH · ICBI · 2026
 </footer>
 
 <script src="assets/js/i18n.js"></script>
@@ -400,6 +704,67 @@
 <script>
   // Aplicar idioma guardado al cargar
   i18n.applyTranslations();
+
+  // ── Card Options (selects ocultos) ──────────────────────────────────
+  document.querySelectorAll('.card-options').forEach(group => {
+    const targetId = group.dataset.for;
+    const opts = group.querySelectorAll('.card-opt');
+    opts.forEach(opt => {
+      opt.addEventListener('click', () => {
+        opts.forEach(o => o.classList.remove('active'));
+        opt.classList.add('active');
+        const sel = document.getElementById(targetId);
+        if (sel) sel.value = opt.dataset.value;
+      });
+    });
+  });
+
+  // ── Estrellas de educación financiera ──────────────────────────────
+  const eduLabels = ['', 'Básica (1)', 'Media-baja (2)', 'Media (3)', 'Media-alta (4)', 'Avanzada (5)'];
+  const eduStars  = document.querySelectorAll('.edu-star');
+  const eduSelect = document.getElementById('nivel_educacion_financiera');
+  const eduLabel  = document.getElementById('eduLabel');
+
+  function updateStars(val) {
+    eduStars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.val) <= val));
+    if (eduLabel) eduLabel.textContent = eduLabels[val] || '';
+    if (eduSelect) eduSelect.value = val;
+  }
+  updateStars(3); // valor por defecto
+
+  eduStars.forEach(star => {
+    star.addEventListener('click', () => updateStars(parseInt(star.dataset.val)));
+    star.addEventListener('mouseenter', () => {
+      const v = parseInt(star.dataset.val);
+      eduStars.forEach(s => s.classList.toggle('hover', parseInt(s.dataset.val) <= v));
+    });
+    star.addEventListener('mouseleave', () => eduStars.forEach(s => s.classList.remove('hover')));
+  });
+
+  // ── Barra de ratio en vivo (paso 2) ────────────────────────────────
+  function updateRatio() {
+    const ingreso  = parseFloat(document.getElementById('ingreso_mensual')?.value) || 0;
+    const fijos    = parseFloat(document.getElementById('gastos_fijos')?.value)    || 0;
+    const vars     = parseFloat(document.getElementById('gastos_variables')?.value) || 0;
+    const live     = document.getElementById('ratioLive');
+    if (!live) return;
+    if (ingreso <= 0) { live.style.display = 'none'; return; }
+    live.style.display = 'block';
+    const pFixed  = Math.min(100, (fijos / ingreso) * 100);
+    const pVar    = Math.min(100 - pFixed, (vars / ingreso) * 100);
+    const pLeft   = Math.max(0, 100 - pFixed - pVar);
+    document.getElementById('rFixed').style.width  = pFixed + '%';
+    document.getElementById('rVar').style.width    = pVar + '%';
+    document.getElementById('rLeft').style.width   = pLeft + '%';
+    document.getElementById('rFixedPct').textContent = pFixed.toFixed(0) + '%';
+    document.getElementById('rVarPct').textContent   = pVar.toFixed(0)   + '%';
+    document.getElementById('rLeftPct').textContent  = pLeft.toFixed(0)  + '%';
+  }
+
+  ['ingreso_mensual','gastos_fijos','gastos_variables'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateRatio);
+  });
 </script>
 
 </body>

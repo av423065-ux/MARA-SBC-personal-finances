@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MARA — Sistema Basado en Conocimiento</title>
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/portada.css" />
+  <!-- theme.js primero para evitar flash -->
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/three.min.js"></script>
+</head>
+<body>
+
+<!-- Canvas 3D de fondo -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- Controles: tema -->
+<div class="controls-bar">
+  <button class="ctrl-btn" id="btnTheme" onclick="theme.toggle()" title="Cambiar tema">☾</button>
+</div>
+
+<div class="portada-wrapper">
+  <div class="portada-card">
+
+    <!-- ── UAEH Header ── -->
+    <div class="portada-uaeh">
+      <div class="uaeh-escudo">
+        <img src="assets/img/uaeh.png" alt="Logo UAEH" class="uaeh-logo-img" />
+      </div>
+
+      <div class="uaeh-info">
+        <div class="uaeh-universidad">Universidad Autónoma del Estado de Hidalgo</div>
+        <div class="uaeh-icbi">Instituto de Ciencias Básicas e Ingeniería</div>
+      </div>
+    </div>
+
+    <!-- ── Divisor ── -->
+    <div class="portada-divider"></div>
+
+    <!-- ── MARA Brand ── -->
+    <div class="portada-brand">
+      <div class="mara-logo-ring">
+        <img src="assets/img/logo.svg" alt="MARA Logo" class="portada-mara-logo" />
+      </div>
+      <h1 class="portada-mara-titulo">MARA</h1>
+      <p class="portada-mara-subtitulo">Monitor y Asesor de Finanzas Personales y Ahorro</p>
+      <span class="portada-badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="vertical-align:-2px; margin-right:5px;">
+          <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+        </svg>
+        Sistema Basado en Conocimiento · Motor de Inferencia RETE
+      </span>
+    </div>
+
+    <!-- ── Divisor ── -->
+    <div class="portada-divider"></div>
+
+    <!-- ── Datos del proyecto ── -->
+    <div class="portada-meta">
+      <div class="meta-item">
+        <span class="meta-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        </span>
+        <span class="meta-label">Materia</span>
+        <span class="meta-valor">Sistemas Basados en Conocimiento</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </span>
+        <span class="meta-label">Elaborado por</span>
+        <span class="meta-valor">Eduardo Figueroa &amp; Mario Ávila</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </span>
+        <span class="meta-label">Fecha</span>
+        <span class="meta-valor">Abril 2026</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </span>
+        <span class="meta-label">Motor</span>
+        <span class="meta-valor">80 Reglas · 6 Dominios · Flask 3.0</span>
+      </div>
+    </div>
+
+    <!-- ── Botón de entrada ── -->
+    <button class="portada-btn-ingresar" onclick="enterApp()">
+      <span class="btn-ingresar-text">Ingresar al Sistema</span>
+      <span class="btn-ingresar-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </span>
+    </button>
+
+    <p class="portada-hint">Diagnóstico financiero inteligente basado en estándares CONDUSEF · CNBV · Banxico</p>
+
+  </div>
+  <!-- /portada-card -->
+</div>
+
+<script src="assets/js/background.js"></script>
+<script>
+  function enterApp() {
+    sessionStorage.setItem('mara_entered', '1');
+    const btn = document.querySelector('.portada-btn-ingresar');
+    btn.innerHTML = '<span class="btn-ingresar-text">Cargando…</span>';
+    btn.disabled = true;
+    window.location.href = 'index.html';
+  }
+</script>
+
+</body>
+</html>

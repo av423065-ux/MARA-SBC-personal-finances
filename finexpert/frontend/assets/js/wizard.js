@@ -2,7 +2,7 @@
 
 const wizard = (() => {
   let currentStep = 1;
-  const TOTAL_STEPS = 4;
+  const TOTAL_STEPS = 5;  // 4 pasos de datos + 1 dashboard
 
   /** Lee el valor de un campo del formulario como float (o 0 si vacío). */
   const num  = (id) => parseFloat(document.getElementById(id)?.value || "0") || 0;
@@ -26,6 +26,7 @@ const wizard = (() => {
       ingreso_mensual:            num("ingreso_mensual"),
       gastos_fijos:               num("gastos_fijos"),
       gastos_variables:           num("gastos_variables"),
+      // Paso 3
       pago_mensual_deudas:        num("pago_mensual_deudas"),
       deuda_total:                num("deuda_total"),
       tasa_promedio_anual:        tasaPct > 1 ? tasaPct / 100 : tasaPct,
@@ -37,7 +38,7 @@ const wizard = (() => {
       tiene_deuda_tasa_variable:  bool("tiene_deuda_tasa_variable"),
       usa_credito_para_gastos_basicos: bool("usa_credito_para_gastos_basicos"),
       tendencia_tasas:            str("tendencia_tasas"),
-      // Paso 3
+      // Paso 4
       meses_fondo_emergencia:     num("meses_fondo_emergencia"),
       capital_disponible:         num("capital_disponible"),
       num_instrumentos:           num("num_instrumentos"),
@@ -76,12 +77,15 @@ const wizard = (() => {
         errs.push(i18n.t("err.no_income"));
       if (num("gastos_fijos") < 0 || num("gastos_variables") < 0)
         errs.push(i18n.t("err.neg_expenses"));
+    }
+
+    if (step === 3) {
       const tasa = num("tasa_promedio_anual");
       if (tasa < 0 || tasa > 200)
         errs.push(i18n.t("err.rate"));
     }
 
-    if (step === 3) {
+    if (step === 4) {
       const horizonte = Math.trunc(num("horizonte_temporal"));
       if (horizonte < 1 || horizonte > 600)
         errs.push(i18n.t("err.horizon"));
@@ -99,6 +103,7 @@ const wizard = (() => {
     if (!msg) { el.style.display = "none"; return; }
     el.textContent = msg;
     el.style.display = "block";
+    el.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
   /** Activa visualmente el paso indicado en la barra de progreso. */
@@ -108,10 +113,12 @@ const wizard = (() => {
       el.classList.toggle("active",    n === step);
       el.classList.toggle("completed", n < step);
     });
-    // Resetear número en círculos de pasos completados (muestran ✓ vía CSS)
     document.querySelectorAll(".step-circle").forEach((el, idx) => {
-      if (idx + 1 >= step) el.textContent = idx + 1;
-      else el.textContent = "";
+      const stepNum = el.querySelector('.step-num');
+      if (stepNum) {
+        if (idx + 1 >= step) stepNum.textContent = idx + 1;
+        else stepNum.textContent = "";
+      }
     });
   }
 
@@ -161,7 +168,7 @@ const wizard = (() => {
       // Guardar perfil para el explainer
       explainer.setProfile(profile);
 
-      // Ir al paso 4 y renderizar
+      // Ir al paso 5 (dashboard) y renderizar
       currentStep = TOTAL_STEPS;
       showStep(currentStep);
       renderDashboard(diagnosis);
@@ -169,16 +176,98 @@ const wizard = (() => {
     } catch (err) {
       showError(`${i18n.t("err.api")} ${err.message}`);
     } finally {
-      btn.innerHTML = i18n.t("btn.diagnose");
+      btn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px;">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <span>${i18n.t("btn.diagnose")}</span>`;
       btn.disabled = false;
     }
   }
 
-  /** Reinicia el wizard al paso 1. */
+  /**
+   * Reinicia el wizard al paso 1 y limpia TODOS los campos del formulario
+   * dejándolos exactamente como al abrir la página por primera vez.
+   */
   function reset() {
+    // ── Campos numéricos y de texto ──────────────────────────────────
+    const defaults = {
+      edad:                       "30",
+      num_dependientes:           "0",
+      ingreso_mensual:            "",
+      gastos_fijos:               "",
+      gastos_variables:           "",
+      pago_mensual_deudas:        "0",
+      deuda_total:                "0",
+      tasa_promedio_anual:        "0",
+      num_creditos:               "0",
+      meses_fondo_emergencia:     "0",
+      capital_disponible:         "0",
+      num_instrumentos:           "0",
+      tasa_rendimiento_esperada:  "0",
+      horizonte_temporal:         "12",
+      meta_monto:                 "0",
+      meses_deficit:              "0",
+    };
+    Object.entries(defaults).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    });
+
+    // ── Selects ────────────────────────────────────────────────────
+    const selectDefaults = {
+      estado_civil:           "soltero",
+      tipo_ingreso:           "fijo",
+      objetivo_principal:     "ahorro",
+      tendencia_gasto:        "estable",
+      tendencia_ahorro:       "estable",
+      tendencia_tasas:        "estable",
+      nivel_educacion_financiera: "3",
+    };
+    Object.entries(selectDefaults).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    });
+
+    // ── Checkboxes ─────────────────────────────────────────────────
+    const checkboxIds = [
+      "tiene_tarjeta_credito", "paga_minimo_tarjeta", "tiene_hipoteca",
+      "tiene_credito_nomina",  "tiene_deuda_tasa_variable", "usa_credito_para_gastos_basicos",
+      "ahorro_automatico",     "lleva_registro_gastos",     "paga_ISR",
+      "cambio_habitos",        "mes_alto_gasto",             "reserva_impuestos",
+      "pago_extra_deuda_check",
+    ];
+    checkboxIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.checked = false;
+    });
+
+    // ── Card Options → restablecer estado visual ──────────────────
+    document.querySelectorAll('.card-options').forEach(group => {
+      const targetId  = group.dataset.for;
+      const defaultVal = selectDefaults[targetId] || "";
+      group.querySelectorAll('.card-opt').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.value === defaultVal);
+      });
+    });
+
+    // ── Estrellas de educación ────────────────────────────────────
+    const stars = document.querySelectorAll('.edu-star');
+    const lbl   = document.getElementById('eduLabel');
+    stars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.val) <= 3));
+    if (lbl) lbl.textContent = 'Media (3)';
+
+    // ── Barra de ratio → ocultar ──────────────────────────────────
+    const ratioLive = document.getElementById('ratioLive');
+    if (ratioLive) ratioLive.style.display = 'none';
+
+    // ── Limpiar error ─────────────────────────────────────────────
+    showError("");
+
+    // ── Volver al paso 1 ──────────────────────────────────────────
     currentStep = 1;
     showStep(1);
-    showError("");
   }
 
   return { next, prev, submit, reset };
