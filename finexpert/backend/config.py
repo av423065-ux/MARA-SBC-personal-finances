@@ -22,3 +22,8 @@ CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*").split(",")
 
 # Nivel de log
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+
+# Chatbot (OpenRouter)
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
+CHAT_MODEL         = os.getenv("CHAT_MODEL", "openai/gpt-oss-20b:free")
+CHAT_MAX_TOKENS    = int(os.getenv("CHAT_MAX_TOKENS", "300"))

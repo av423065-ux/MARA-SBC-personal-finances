@@ -168,6 +168,23 @@ const wizard = (() => {
       // Guardar perfil para el explainer
       explainer.setProfile(profile);
 
+      // Exportar contexto compacto para el chatbot
+      const hd = diagnosis.hechos_derivados || {};
+      window.maraContext = {
+        ingreso:              profile.ingreso_mensual,
+        tipo_ingreso:         profile.tipo_ingreso,
+        ratio_ahorro:         hd.ratio_ahorro,
+        ratio_gasto_fijo:     hd.ratio_gasto_fijo,
+        DAI:                  hd.DAI,
+        fondo_emergencia_meses: profile.meses_fondo_emergencia,
+        situacion:            diagnosis.situacion,
+        semaforo:             diagnosis.semaforo,
+        certeza:              diagnosis.nivel_certeza,
+        objetivo:             profile.objetivo_principal,
+        perfil_riesgo:        hd.perfil_riesgo,
+        top_recomendaciones:  (diagnosis.recomendaciones || []).slice(0, 3).map(r => r.accion),
+      };
+
       // Ir al paso 5 (dashboard) y renderizar
       currentStep = TOTAL_STEPS;
       showStep(currentStep);

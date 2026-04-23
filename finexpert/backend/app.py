@@ -1,8 +1,9 @@
 """
 MARA — Punto de entrada Flask.
-Expone dos endpoints REST:
+Expone endpoints REST:
   POST /diagnose  → ejecuta el motor de inferencia y devuelve el diagnóstico
   POST /explain   → devuelve la cadena de razonamiento de una regla específica
+  POST /chat      → asistente de dudas financieras vía OpenRouter
   GET  /health    → verificación de disponibilidad del servicio
 """
 from __future__ import annotations
@@ -23,6 +24,7 @@ from knowledge.fact_base import FactBase
 from engine.inference_engine import InferenceEngine
 from engine.explainer import Explainer
 from models.user_profile import UserProfile
+from chatbot.chat_handler import call_chat
 
 # ------------------------------------------------------------------
 # Configuración de logging
@@ -199,6 +201,50 @@ def explain():
     except Exception as exc:
         logger.exception("Error en /explain: %s", exc)
         return _error("Error interno al generar la explicación.", 500)
+
+
+@app.post("/chat")
+def chat():
+    """
+    Asistente de dudas financieras vía OpenRouter.
+
+    Body JSON:
+        message       str   (requerido) — mensaje del usuario
+        history       list  (opcional)  — últimas N interacciones [{role, content}, ...]
+        user_context  dict  (opcional)  — resumen compacto del diagnóstico completado
+
+    Respuesta JSON:
+        reply  str  — respuesta del asistente
+    """
+    data = request.get_json(silent=True)
+    if not data:
+        return _error("Se requiere un body JSON con al menos {message}.")
+
+    message = (data.get("message") or "").strip()
+    if not message:
+        return _error("El campo 'message' no puede estar vacío.")
+    if len(message) > 2000:
+        return _error("El mensaje es demasiado largo (máx. 2000 caracteres).")
+
+    history      = data.get("history", [])
+    user_context = data.get("user_context")
+
+    # Sanitizar historial: solo aceptar roles válidos
+    clean_history = [
+        {"role": h["role"], "content": str(h.get("content", ""))}
+        for h in history
+        if isinstance(h, dict) and h.get("role") in ("user", "assistant")
+    ]
+
+    try:
+        reply = call_chat(message, clean_history, user_context)
+        return jsonify({"reply": reply})
+    except RuntimeError as exc:
+        logger.warning("Error en /chat: %s", exc)
+        return _error(str(exc), 502)
+    except Exception as exc:
+        logger.exception("Error inesperado en /chat: %s", exc)
+        return _error("Error interno del asistente.", 500)
 
 
 # ------------------------------------------------------------------
